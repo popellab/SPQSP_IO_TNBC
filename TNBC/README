@@ -1,0 +1,56 @@
+Comments about the current state of the spQSP TNBC code
+
+
+Although the algorithm is finished, some lines of code need to be rewritten/removed for computational speed purposes. An update including these pending modifications will be uploaded soon.
+
+The following files include lines with values (here between $ symbols) that will be defined as input parameters in the next update. The values between $$ symbols below have been used to generate some of the invasive front results.
+
+-	TNBC/SP_QSP_TNBC/abm/agent/TCell.cpp
+
+Line 88 -> rng.get_unif_01() < params.getVal(PARAM_T_CELL_MOVE_PROB)/$6$
+
+
+-	TNBC/SP_QSP_TNBC/abm/compartment/Tumor.cpp
+
+Line 180 -> for (int I = 0; I < $111$; I++)
+
+Lines 407-413 -> 
+    		double p1 = $1$;
+    		double p2 = $0.001$;
+    		double p3 = $0.05$;
+    		double a1 = $0.02$;
+    		double a2 = $0$;
+    		int min_cc = $-2$;
+    		int max_cc = $2$;
+
+
+-	TNBC/SP_QSP_TNBC/abm/compartment/LymphCentral.cpp
+
+Line 107 -> while (ss_val[20] < $9.4e7$)
+
+
+-	TNBC/SP_QSP_TNBC/abm/compartment/VoxelContentGen.cpp
+
+Lines 64-65 ->     
+double mean_dist = $0$ * params.getVal(PARAM_VOXEL_SIZE)/1e6;
+    		double sd_dist = $15$ * params.getVal(PARAM_VOXEL_SIZE)/1e6;
+
+
+-	TNBC/SP_QSP_TNBC/core/Param.cpp
+
+Line 336 -> _paramFloatInternal[PARAM_CANCER_PROG_GROWTH_RATE] = $QP(14)$;
+
+
+-	TNBC/TNBC_multi/TNBC_core.cpp
+
+Line 260 -> double SC = $50000$;
+
+Besides these modifications, this spQSP extended version required to change the following line in one the shared code files:
+
+
+SP_QSP_shared/ABM_Base/SpatialCompartment.h
+
+Line 43 -> virtual void timeSlice(unsigned long slice, int cc, int teff, int treg, int mdsc, int texh)= 0;
+
+
+For any questions, please contact me through my e-mail: alvrm86@gmail.com
