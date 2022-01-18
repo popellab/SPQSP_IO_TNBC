@@ -5,22 +5,22 @@ All required files for SBML conversion are available at https://github.com/popel
 Nevertheless, in order to use the spatial QSP model, this step is not necessary since the SBML conversion has already been performed by the developer.
 
 1.	Start program to at package directory. <br />
-Replace <pkg_dir> with package directory.
-`$ cd <pkg_dir>`
+Replace <pkg_dir> with package directory.<br />
+`$ cd <pkg_dir>`<br />
 `$ python converter_gui.py`
 
 2.	Import SBML model file (Wang_QSP_Model.xml).<br />
 
 3.	Click “Load setting” button and load the default configuration file (vct_simulation.xml).<br />
-a.	The configuration help to specify simulation time, relative, and absolute tolerance (ignore the hash mismatch error). 
-b.	Recommend: Click “Validate units” and select “convert units”. 
+a.	The configuration help to specify simulation time, relative, and absolute tolerance (ignore the hash mismatch error). <br />
+b.	Recommend: Click “Validate units” and select “convert units”. <br />
 
 4.	Deactivate “Use extra adjustable variables” and click “Analyze model” to apply the configuration to C++ files. Select the output directory and type in the Namespace (Cancer_VCT).<br />
 
 5.	Export files (type ODE_system in the Export space) that are necessary for spQSP model, including:<br />
-ODE_system.h/ODE_system.cpp: QSP model class header and implementation files (derived from class CVODEBase).
-Param.h/Param.cpp: model parameter classes (derived from class ParamBase).
-ODE_system_params.xml: model parameter file.  
+ODE_system.h/ODE_system.cpp: QSP model class header and implementation files (derived from class CVODEBase).<br />
+Param.h/Param.cpp: model parameter classes (derived from class ParamBase).<br />
+ODE_system_params.xml: model parameter file.  <br />
 The generated outputs must be slightly modified to be able to run the spatial QSP model. Their final form, ready to use, can be found at https://github.com/popellab/SPQSP_IO_TNBC/tree/main/TNBC/SP_QSP_TNBC/ode and https://github.com/popellab/SPQSP_IO_TNBC/tree/main/TNBC/TNBC_sim/resource (param_all.xml).
 
 -----------
