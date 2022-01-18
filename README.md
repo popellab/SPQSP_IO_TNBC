@@ -21,6 +21,7 @@ b.	Recommend: Click “Validate units” and select “convert units”. <br />
 ODE_system.h/ODE_system.cpp: QSP model class header and implementation files (derived from class CVODEBase).<br />
 Param.h/Param.cpp: model parameter classes (derived from class ParamBase).<br />
 ODE_system_params.xml: model parameter file.  <br />
+
 The generated outputs must be slightly modified to be able to run the spatial QSP model. Their final form, ready to use, can be found at https://github.com/popellab/SPQSP_IO_TNBC/tree/main/TNBC/SP_QSP_TNBC/ode and https://github.com/popellab/SPQSP_IO_TNBC/tree/main/TNBC/TNBC_sim/resource (param_all.xml).
 
 -----------
