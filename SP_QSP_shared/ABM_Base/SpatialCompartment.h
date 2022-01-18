@@ -40,7 +40,7 @@ public:
 	virtual void initCompartment(std::string);
 
 	//! pure virtual
-	virtual void timeSlice(unsigned long slice)= 0;
+	virtual void timeSlice(unsigned long slice, int cc, int teff, int treg, int mdsc, int texh)= 0;
 
 	//! default header for extra remark column when writing cell grid to file
 	virtual std::string getExtraRemarkHeader() const { return ""; };
@@ -171,4 +171,3 @@ inline void SpatialCompartment::serialize(Archive & ar, const unsigned int versi
 
 };
 #endif
-
