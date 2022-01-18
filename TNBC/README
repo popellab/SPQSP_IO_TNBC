@@ -1,10 +1,10 @@
-## QSP FILES - SBML CONVERSION##Comments about the current state of the spQSP TNBC code
+Comments about the current state of the spQSP TNBC code
 
 The following files include lines with values (here between $ symbols) that will be defined as input parameters in the next update. The values between $$ symbols below have been used to generate some of the invasive front results.
 
 -	TNBC/SP_QSP_TNBC/abm/agent/TCell.cpp
 
-Line 88 -> rng.get_unif_01() < params.getVal(PARAM_T_CELL_MOVE_PROB)/$6$
+Line 88 -> rng.get_unif_01() < params.getVal(PARAM_T_CELL_MOVE_PROB)/$6$ 
 
 
 -	TNBC/SP_QSP_TNBC/abm/compartment/Tumor.cpp
@@ -42,12 +42,12 @@ Line 336 -> _paramFloatInternal[PARAM_CANCER_PROG_GROWTH_RATE] = $QP(14)$;
 
 Line 260 -> double SC = $50000$;
 
-Besides these modifications, this spQSP extended version required to change the following line in one of the shared code files:
+Besides these modifications, this spQSP extended version required to change the following line in one of the shared code files from Gong's original version uploaded to :
 
-
-SP_QSP_shared/ABM_Base/SpatialCompartment.h
+-   SP_QSP_shared/ABM_Base/SpatialCompartment.h
 
 Line 43 -> virtual void timeSlice(unsigned long slice, int cc, int teff, int treg, int mdsc, int texh)= 0;
+
 
 
 For any questions, please contact me through my e-mail: alvrm86@gmail.com
