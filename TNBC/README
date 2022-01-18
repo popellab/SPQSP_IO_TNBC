@@ -51,6 +51,7 @@ Besides these modifications, this spQSP extended version required to change the 
 
 Line 43 -> virtual void timeSlice(unsigned long slice, int cc, int teff, int treg, int mdsc, int texh)= 0;
 
-By adding 'int cc, int teff, int treg, int mdsc, int texh' to the original line, the algorithm uses 'timeSlice' function to remember the total number of cells in ABM (cancer cells, effector T cells, regulatory T cells, MDSCs, and exhausted T cells, respectively) at time t-dt in order to perform calculations at time t.
+By adding 'int cc, int teff, int treg, int mdsc, int texh' to the original line, the algorithm uses 'timeSlice' function to use the total number of cells in ABM (cancer cells, effector T cells, regulatory T cells, MDSCs, and exhausted T cells, respectively) at time t to estimate the number of cells at the next time step.
+As explained in section 2.3 (QSP-ABM coupling) of the manuscript, the number of cells in ABM is necessary for scaling calculations every time step.
 
 For any questions, please contact me through my e-mail: alvrm86@gmail.com
