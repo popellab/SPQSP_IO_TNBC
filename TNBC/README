@@ -1,4 +1,4 @@
-##Comments about the current state of the spQSP TNBC code
+## QSP FILES - SBML CONVERSION##Comments about the current state of the spQSP TNBC code
 
 The following files include lines with values (here between $ symbols) that will be defined as input parameters in the next update. The values between $$ symbols below have been used to generate some of the invasive front results.
 
