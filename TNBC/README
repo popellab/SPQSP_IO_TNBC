@@ -1,6 +1,9 @@
-Comments about the current state of the spQSP TNBC code
+CURRENT STATE OF THE SPQSP TNBC CODE
 
-The following files include lines with values (here between $ symbols) that will be defined as input parameters in the next update. The values between $$ symbols below have been used to generate some of the invasive front results.
+Comments and notes will be added to the code to facilitate its use in the next update.
+
+The following files include lines with values (here between $ symbols) that will be defined as input parameters in the next update. 
+The values between $$ symbols below have been used to generate some of the invasive front results.
 
 -	TNBC/SP_QSP_TNBC/abm/agent/TCell.cpp
 
@@ -48,6 +51,6 @@ Besides these modifications, this spQSP extended version required to change the 
 
 Line 43 -> virtual void timeSlice(unsigned long slice, int cc, int teff, int treg, int mdsc, int texh)= 0;
 
-
+By adding 'int cc, int teff, int treg, int mdsc, int texh' to the original line, the algorithm uses 'timeSlice' function to remember the total number of cells in ABM (cancer cells, effector T cells, regulatory T cells, MDSCs, and exhausted T cells, respectively) at time t-dt in order to perform calculations at time t.
 
 For any questions, please contact me through my e-mail: alvrm86@gmail.com
