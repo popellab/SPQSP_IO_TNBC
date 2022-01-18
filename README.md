@@ -1,23 +1,23 @@
-SBML CONVERSION
+# QSP FILES - SBML CONVERSION
 
 This section first examines the Systems Biology Markup Language (SBML) files and converts them to C++ files which are compatible with SUNDIAL/CVODE package. 
 All required files for SBML conversion are available at https://github.com/popellab/SPQSP_IO/tree/main/sbml_cvode and https://github.com/popellab/SPQSP_IO_TNBC (Wang_QSP_Model.xml and vct_simulation.xml). 
 Nevertheless, in order to use the spatial QSP model, this step is not necessary since the SBML conversion has already been performed by the developer.
 
-1.	Start program to at package directory. 
+1.	Start program to at package directory. <br />
 Replace <pkg_dir> with package directory.
-$ cd <pkg_dir>
-$ python converter_gui.py
+`$ cd <pkg_dir>`
+`$ python converter_gui.py`
 
-2.	Import SBML model file (Wang_QSP_Model.xml).
+2.	Import SBML model file (Wang_QSP_Model.xml).<br />
 
-3.	Click “Load setting” button and load the default configuration file (vct_simulation.xml).
+3.	Click “Load setting” button and load the default configuration file (vct_simulation.xml).<br />
 a.	The configuration help to specify simulation time, relative, and absolute tolerance (ignore the hash mismatch error). 
 b.	Recommend: Click “Validate units” and select “convert units”. 
 
-4.	Deactivate “Use extra adjustable variables” and click “Analyze model” to apply the configuration to C++ files. Select the output directory and type in the Namespace (Cancer_VCT).
+4.	Deactivate “Use extra adjustable variables” and click “Analyze model” to apply the configuration to C++ files. Select the output directory and type in the Namespace (Cancer_VCT).<br />
 
-5.	Export files (type ODE_system in the Export space) that are necessary for spQSP model, including:
+5.	Export files (type ODE_system in the Export space) that are necessary for spQSP model, including:<br />
 ODE_system.h/ODE_system.cpp: QSP model class header and implementation files (derived from class CVODEBase).
 Param.h/Param.cpp: model parameter classes (derived from class ParamBase).
 ODE_system_params.xml: model parameter file.  
@@ -25,12 +25,9 @@ The generated outputs must be slightly modified to be able to run the spatial QS
 
 -----------
 
-ABM SIMULATION
+# Spatial QSP SIMULATION
 
 (The following instructions are similar to the guidelines written by Shuming Zhang for a different spatial QSP model: https://github.com/popellab/spQSP-omics-2021)
-
-# spQSP-IO
-User manual for spatial quantitative systems pharmacology for immuno-oncology (spQSP-IO)
 
 ## Ubuntu Operating System Configuration (Only required for Windows User)
 
