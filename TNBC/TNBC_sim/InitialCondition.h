@@ -29,6 +29,10 @@ enum ICFloat{
 enum ICInt{
 	// margin boundary for cancer cell
 	IC_MARGIN_CANCER_BOUNDARY,
+	// number of core ROI windows
+	IC_NUM_ROI_core,
+	// number of margin ROI windows
+	IC_NUM_ROI_margin,
 	// dummy
 	IC_INT_COUNT // dummy for count
 };
