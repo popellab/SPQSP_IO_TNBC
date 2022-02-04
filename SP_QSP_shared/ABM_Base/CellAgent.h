@@ -40,7 +40,7 @@ public:
 	//! pure virtual agent step function
 	//virtual void agentStep(double t, double dt, AgentStep & as) = 0;
 	virtual bool agent_movement_step(double t, double dt, Coord& c) = 0;
-	virtual bool agent_state_step(double t, double dt, Coord& c) = 0;
+	virtual bool agent_state_step(double t, double dt, Coord& c, int cc_p, int teff_p, int treg_p, int mdsc_p, int texh_p) = 0;
 
 	//! virtual step function for molecular events associated with an cellular agent, including ode step
 	virtual void molecularStep(double t, double dt) = 0;
