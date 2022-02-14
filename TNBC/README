@@ -2,12 +2,22 @@ CURRENT STATE OF THE SPQSP TNBC CODE
 
 1) Input parameters
 
-In .../TNBC/TNBC_sim/resource/param_all.xml, there are sets of input parameters with comments "do not change" or "not used". 
+In the xml file ".../TNBC/TNBC_sim/resource/param_all.xml", there are sets of input parameters with comments "do not change" or "not used". 
 The former refers to predefined parameters for the spQSP algorithm that should not be changed.
 The latter refers to parameters that have been included but are not used for the calculations performed in this study. They are necessary for future expansions of the model (spatial variation of species such as CCL2 or Arg-I, 
 addition of IL2 and IFNgamma, resection of the tumor, ipilimumab and other treatments, etc.). Some code lines for these future expansions have been also included but the algorithm does not use them for this study.
 
-2) The 
+2) The parameter "Param.ABM.Environment.Tumor.sd_init_norm_dist" in the xml file ".../TNBC/TNBC_sim/resource/param_all.xml" should be estimated from 
+
+a) "Param.QSP.simulation.init_cancer_cell"
+b) "Param.ABM.Environment.ScalingFactor"
+
+"Param.ABM.Environment.Tumor.sd_init_norm_dist" should have a value such that the number of cancer cells in ABM at time t=0 should be approximately:
+
+Initial number of CC in ABM ~ Param.QSP.simulation.init_cancer_cell/Param.ABM.Environment.ScalingFactor (Equation 1).
+
+It is recommended to choose an initial estimate of "Param.ABM.Environment.Tumor.sd_init_norm_dist", run the first timesteps of the simulation and verify that Equation 1 holds.
+If it does not, repeat the process with a new estimate.
 
 3) This spQSP extended version required to change the following lines in two of the shared code files from Gong's original spatial QSP model (https://github.com/popellab/SPQSP_IO/tree/main/SPQSP_IO/SP_QSP_shared/ABM_Base):
 
