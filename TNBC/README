@@ -16,8 +16,8 @@ b) "Param.ABM.Environment.ScalingFactor"
 
 Initial number of CC in ABM ~ Param.QSP.simulation.init_cancer_cell/Param.ABM.Environment.ScalingFactor (Equation 1).
 
-It is recommended to choose an initial estimate of "Param.ABM.Environment.Tumor.sd_init_norm_dist", run the first timesteps of the simulation and verify that Equation 1 holds.
-If it does not, repeat the process with a new estimate.
+It is recommended to choose an initial estimate for "Param.ABM.Environment.Tumor.sd_init_norm_dist", run the first timesteps of the simulation and verify that Equation 1 holds.
+If it does not, repeat the process with a new estimate until the condition is met.
 
 3) This spQSP extended version required to change the following lines in two of the shared code files from Gong's original spatial QSP model (https://github.com/popellab/SPQSP_IO/tree/main/SPQSP_IO/SP_QSP_shared/ABM_Base):
 
