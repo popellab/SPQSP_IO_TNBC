@@ -7,11 +7,9 @@ The former refers to predefined parameters for the spQSP algorithm that should n
 The latter refers to parameters that have been included but are not used for the calculations performed in this study. They are necessary for future expansions of the model (spatial variation of species such as CCL2 or Arg-I, 
 addition of IL2 and IFNgamma, resection of the tumor, ipilimumab and other treatments, etc.). Some code lines for these future expansions have been also included but the algorithm does not use them for this study.
 
-2) 
+2) The 
 
-3) 
-
-This spQSP extended version required to change the following lines in two of the shared code files from Gong's original spatial QSP model (https://github.com/popellab/SPQSP_IO/tree/main/SPQSP_IO/SP_QSP_shared/ABM_Base):
+3) This spQSP extended version required to change the following lines in two of the shared code files from Gong's original spatial QSP model (https://github.com/popellab/SPQSP_IO/tree/main/SPQSP_IO/SP_QSP_shared/ABM_Base):
 
 -   SP_QSP_shared/ABM_Base/SpatialCompartment.h
 
