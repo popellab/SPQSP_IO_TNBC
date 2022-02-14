@@ -1,10 +1,12 @@
 CURRENT STATE OF THE SPQSP TNBC CODE
 
--   TNBC/TNBC_sim/resource/param_all.xml
+1) Input parameters
 
+In .../TNBC/TNBC_sim/resource/param_all.xml, there are sets of parameters with the comment
 
+In this xml file
 
--------
+2) 
 
 This spQSP extended version required to change the following lines in two of the shared code files from Gong's original spatial QSP model (https://github.com/popellab/SPQSP_IO/tree/main/SPQSP_IO/SP_QSP_shared/ABM_Base):
 
