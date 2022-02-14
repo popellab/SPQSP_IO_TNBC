@@ -31,13 +31,16 @@ const char* _description[][PARAM_DESCRIPTION_FIELD_COUNT] =
 	{ "Param.QSP.simulation.weight_qsp", "", "prob" },
 	{ "Param.QSP.simulation.t_steadystate", "days", "pos" },
 	{ "Param.QSP.simulation.t_resection", "days", "pos" },
+	{ "Param.QSP.simulation.init_cancer_cell", "", "pos" },
 	/* ABM */
 	//environmental
 	{ "Param.ABM.Environment.SecPerSlice", "", "pos" },
-	{ "Param.ABM.Environment.ScalingFactor", "scaling factor", "pos" },
-	{ "Param.ABM.Environment.Sources", "sources", "pos" },
-	{ "Param.ABM.Environment.recSiteFactor", "number of adhesion site per port voxel", "pos" },
-	{ "Param.ABM.Environment.adhSiteDens", "total adhesion site density on tumor vasculature, mol/m^3", "pos" },
+	{ "Param.ABM.Environment.ScalingFactor", "", "pos" },
+	{ "Param.ABM.Environment.MaxProbIF", "", "pos" },
+	{ "Param.ABM.Environment.MinProbIF", "", "pos" },
+	{ "Param.ABM.Environment.ProbCore", "", "pos" },
+	{ "Param.ABM.Environment.MaxCCDens", "", "pos" },
+	{ "Param.ABM.Environment.MinCCDens", "", "pos" },
 	//pharmacokinetics	
 	{ "Param.ABM.Pharmacokinetics.nivoDoseIntervalTime", "days", "pos" },
 	{ "Param.ABM.Pharmacokinetics.nivoDose", "mole/m^3", "pos" },
@@ -51,6 +54,7 @@ const char* _description[][PARAM_DESCRIPTION_FIELD_COUNT] =
 	{ "Param.ABM.TCell.lifespanMean", "days", "pos" },
 	{ "Param.ABM.TCell.lifespanSD", "days", "pos" },
 	{ "Param.ABM.TCell.moveProb", "", "pr" },
+	{ "Param.ABM.TCell.moveProb_cyt_or_supp", "", "pr" },
 	{ "Param.ABM.TCell.IL2_release_time", "amount of time to release IL2 after stimulation, sec", "pos" },
 	{ "Param.ABM.TCell.IL2_prolif_th", "accumulative IL2 exposure to proliferate, sec*ng/mL", "pos" },
 	{ "Param.ABM.TCell.IFNg_release_time", "amount of time to release IFNg after stimulation, sec", "pos" },
@@ -60,6 +64,7 @@ const char* _description[][PARAM_DESCRIPTION_FIELD_COUNT] =
 	{ "Param.ABM.MDSC.moveProb", "", "pr" },	
 	//cancer cell
 	{"Param.ABM.CancerCell.asymmetricDivProb", "", "pr"},
+	{"Param.ABM.CancerCell.progGrowthRate", "per day", "pos"},
 	{"Param.ABM.CancerCell.senescentDeathRate", "per day", "pos"},
 	{"Param.ABM.CancerCell.moveProb_csc", "", "pr"},
 	{"Param.ABM.CancerCell.moveProb", "", "pr"},
@@ -98,6 +103,11 @@ const char* _description[][PARAM_DESCRIPTION_FIELD_COUNT] =
 	{"Param.ABM.Environment.Tumor.VoxelSize", "voxel resolution, microns", "pos"},
 	{"Param.ABM.Environment.Tumor.nr_T_voxel", "", "pos"},
 	{"Param.ABM.Environment.Tumor.nr_T_voxel_C", "", "pos"},
+	{"Param.ABM.Environment.Tumor.mean_init_norm_dist", "", "pos"},
+	{"Param.ABM.Environment.Tumor.sd_init_norm_dist", "", "pos"},
+	{"Param.ABM.Environment.Sources", "", "pos" },
+	{"Param.ABM.Environment.MigratedVoxels", "", "pos" },	
+	{"Param.ABM.Environment.LengthNormDens", "", "pos" },
 	{"Param.ABM.Environment.ShuffleInterval", "", "pos"},
 	{"Param.ABM.Environment.gridshiftInterval", "", "pos"},
 	{"Param.ABM.TCell.div_interval", "", "pos"},
@@ -252,17 +262,6 @@ void Param::update_from_qsp(void){
 	// hill coefficient
 	_paramFloatInternal[PARAM_N_PD1_PDL1] = QP(143);
 
-	/*
-	std::cout << "k1, k2, k3, T1, PDL1_tot" 
-		<< ": " << _paramFloatInternal[PARAM_PDL1_K1]
-		<< ", " << _paramFloatInternal[PARAM_PDL1_K2]
-		<< ", " << _paramFloatInternal[PARAM_PDL1_K3]
-		<< ", " << _paramFloatInternal[PARAM_PD1_SYN]
-		<< ", " << _paramFloatInternal[PARAM_PDL1_SYN_MAX]
-		<< std::endl;
-	std::cout << "k50: " << _paramFloatInternal[PARAM_PD1_PDL1_HALF]<< std::endl;
-	*/
-
 	// Parameters calculated from QSP parameter values
 	double t_step_sec = _paramFloat[PARAM_SEC_PER_TIME_SLICE];
 
@@ -281,13 +280,6 @@ void Param::update_from_qsp(void){
 
 	// Recruitment
 
-	//The number of adhesion site per voxel is:
-	double site_per_voxel = _paramFloat[PARAM_ADH_SITE_DENSITY] * std::pow(double(_paramInt[PARAM_VOXEL_SIZE]) / 1e6, 3) * AVOGADROS;
-	//The number of adhesion site represented by each ABM recruitment port
-	double site_per_port = _paramFloat[PARAM_REC_SITE_FACTOR];
-	//percentage of voxels to be assigned as ports
-	_paramFloatInternal[PARAM_REC_PORT_PROB] = 1;
-
 	/*When calculating recruitment probability:
 	*/
 	double  w = _paramFloat[PARAM_WEIGHT_QSP];
@@ -296,8 +288,6 @@ void Param::update_from_qsp(void){
 	// Treg -> k (1/mol) // p = k (1/mol) * Cent.T (mol)
 	_paramFloatInternal[PARAM_TREG_RECRUIT_K] = QP(27) * t_step_sec;
 
-	std::cout << "keff" << _paramFloatInternal[PARAM_TEFF_RECRUIT_K] << std::endl;
-	std::cout << "kreg" << _paramFloatInternal[PARAM_TREG_RECRUIT_K] << std::endl;
 	// MDSC -> k (m^3/mol) // p = k (m^3/mol) * (Tum.MDSCmax * Tum.Vol - Tum.MDSC) (mol) / Tum.Vol(m^3)
 	_paramFloatInternal[PARAM_MDSC_RECRUIT_K] = QP(180) * t_step_sec;
 	_paramFloatInternal[PARAM_MDSC_RECRUIT_BY_CCL2_K] = QP(162) * t_step_sec;
@@ -309,13 +299,6 @@ void Param::update_from_qsp(void){
 	_paramFloatInternal[PARAM_MDSC_LIFE_MEAN] = 1 / (QP(163) * t_step_sec);
 	//std::cout << "Internal param: " << QP(144)  <<  ", "  << getVal(PARAM_TREG_LIFE_MEAN) << std::endl;
 	/*
-	std::cout
-	<< t_step_sec << ", " << QP(40) << ", " << QP(148) << "\n"
-	<< "PARAM_ESCAPE_BASE, " << _paramFloatInternal[PARAM_ESCAPE_BASE] << "\n"
-	<< "PARAM_EXHUAST_BASE_PDL1, " << _paramFloatInternal[PARAM_EXHUAST_BASE_PDL1] << "\n"
-	<< "PARAM_EXHUAST_BASE_TREG, " << _paramFloatInternal[PARAM_EXHUAST_BASE_TREG] << "\n"
-	<< std::endl;
-	*/
 
 	/*Treg expansion*/
 	_paramFloatInternal[PARAM_TREG_EXP_INTERVAL_SLICE]
@@ -329,16 +312,9 @@ void Param::update_from_qsp(void){
 	// unit: day^-1
 	_paramFloatInternal[PARAM_CSC_GROWTH_RATE] = rs * SEC_PER_DAY;
 
-	//Entire tumor (tumor growth 0.01)
-	//_paramFloatInternal[PARAM_CANCER_PROG_GROWTH_RATE] = 0.005;
-
-	//Partial tumor
-	_paramFloatInternal[PARAM_CANCER_PROG_GROWTH_RATE] = QP(14);
 
 	_paramFloatInternal[PARAM_FLOAT_CANCER_CELL_STEM_DIV_INTERVAL_SLICE]
 		= ((1 - _paramFloat[PARAM_CANCER_STEM_ASYMMETRIC_DIV_PROB])*std::log(2)+_paramFloat[PARAM_CANCER_STEM_ASYMMETRIC_DIV_PROB])/rs / getVal(PARAM_SEC_PER_TIME_SLICE);
-
-		std::cout << "stem" << _paramFloatInternal[PARAM_FLOAT_CANCER_CELL_STEM_DIV_INTERVAL_SLICE] << std::endl;
 
 	_paramFloatInternal[PARAM_CANCER_SENESCENT_MEAN_LIFE] =
 		1 / _paramFloat[PARAM_CANCER_SENESCENT_DEATH_RATE]
@@ -346,10 +322,9 @@ void Param::update_from_qsp(void){
 		
 
 	_paramFloatInternal[PARAM_FLOAT_CANCER_CELL_PROGENITOR_DIV_INTERVAL_SLICE]
-		= std::log(2)/ _paramFloatInternal[PARAM_CANCER_PROG_GROWTH_RATE]
+		= std::log(2)/ getVal(PARAM_CANCER_PROG_GROWTH_RATE)
 		* SEC_PER_DAY / getVal(PARAM_SEC_PER_TIME_SLICE);
 
-		std::cout << "prog" << _paramFloatInternal[PARAM_FLOAT_CANCER_CELL_PROGENITOR_DIV_INTERVAL_SLICE] << std::endl;
 
 	/*
 	std::cout << getVal(PARAM_FLOAT_CANCER_SENESCENT_DEATH_PROB)
