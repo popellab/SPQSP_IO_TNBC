@@ -123,6 +123,7 @@
   </Molecular>
 //   
   <IC>
+// Do not change    
     <core>
       <num_roi>1</num_roi>    
       <stationary>1</stationary>
@@ -139,6 +140,7 @@
         </fold>
       </vas>
     </core>
+//    
 // Not used       
     <margin>
       <num_roi>0</num_roi>    
