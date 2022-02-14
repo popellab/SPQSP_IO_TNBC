@@ -3,12 +3,19 @@
   <ABM>
     <Environment>
       <SecPerSlice>21600</SecPerSlice>
-      <ScalingFactor>2500</ScalingFactor>
-      <Sources>40000</Sources>   
-      <recSiteFactor>1000</recSiteFactor>
-      <adhSiteDens>1.66e-09</adhSiteDens>  
+      <ScalingFactor>50000</ScalingFactor>
+      <Sources>40000</Sources>  
+      <MigratedVoxels>111</MigratedVoxels>  
+      <LengthNormDens>5</LengthNormDens>
+	    <MaxProbIF>1</MaxProbIF>
+	    <MinProbIF>0.001</MinProbIF>
+	    <ProbCore>0.05</ProbCore>
+	    <MaxCCDens>0.02</MaxCCDens>
+	    <MinCCDens>0</MinCCDens>
+// Do not change  
       <ShuffleInterval>8</ShuffleInterval>
       <gridshiftInterval>1</gridshiftInterval>
+//       
       <Tumor>
         <XSize>200</XSize>
         <YSize>200</YSize>
@@ -16,12 +23,15 @@
         <VoxelSize>20</VoxelSize>
         <nr_T_voxel>8</nr_T_voxel>
         <nr_T_voxel_C>1</nr_T_voxel_C>
+        <mean_init_norm_dist>0</mean_init_norm_dist>
+        <sd_init_norm_dist>15</sd_init_norm_dist>
       </Tumor>
     </Environment>
     <Pharmacokinetics>
       <nivoOn>0</nivoOn>
       <nivoDoseIntervalTime>14</nivoDoseIntervalTime>
       <nivoDose>2.79e-4</nivoDose>
+// Not used        
       <durvOn>0</durvOn>
       <durvDoseIntervalTime>28</durvDoseIntervalTime>
       <durvDose>9.21e-4</durvDose>      
@@ -30,23 +40,29 @@
       <entDose>2.21e-3</entDose>   
       <ipiOn>0</entOn>
       <ipiDoseIntervalTime>42</ipiDoseIntervalTime>
-      <ipiDose>9.3e-5</ipiDose>  
+      <ipiDose>9.3e-5</ipiDose> 
+//       
     </Pharmacokinetics>
+// Not used       
     <cell>
       <PDL1_th>.1</PDL1_th>
       <IFNg_PDL1_half>.11</IFNg_PDL1_half>
       <IFNg_PDL1_n>1.26</IFNg_PDL1_n>
       <PDL1_halflife>.1</PDL1_halflife>
     </cell>
+//   
     <TCell>
       <lifespanMean>100</lifespanMean>
       <lifespanSD>0</lifespanSD>
       <div_interval>0</div_interval>
       <div_limit>0</div_limit>
       <moveProb>1</moveProb>
+      <moveProb_cyt_or_supp>0.167</moveProb_cyt_or_supp>
+// Not used         
       <IL2_release_time>1e20</IL2_release_time>
       <IL2_prolif_th>63460</IL2_prolif_th>
-      <IFNg_release_time>1e20</IFNg_release_time>      
+      <IFNg_release_time>1e20</IFNg_release_time>    
+//        
     </TCell>
     <Treg>
       <div_limit_exp>10000000</div_limit_exp>
@@ -57,15 +73,19 @@
       <moveProb>0.08</moveProb>     
     </MDSC>
     <CancerCell>
+      <progGrowthRate>0.015</progGrowthRate>
       <senescentDeathRate>0.0001</senescentDeathRate>
       <asymmetricDivProb>0.95</asymmetricDivProb>
       <progenitorDivMax>9</progenitorDivMax>
       <moveProb>0.055</moveProb>
       <moveProb_csc>0.022</moveProb_csc>
       <mincc>0</mincc>
+// Not used   
       <IFNgUptake>1e-3</IFNgUptake>
+//      
     </CancerCell>
   </ABM>
+// Not used     
   <Molecular>
     <stepPerSlice>36</stepPerSlice>
     <biofvm>
@@ -101,6 +121,7 @@
     <allMolecularOff>0</allMolecularOff>
     <diffusionOff>0</diffusionOff>
   </Molecular>
+//   
   <IC>
     <core>
       <num_roi>1</num_roi>    
@@ -118,6 +139,7 @@
         </fold>
       </vas>
     </core>
+// Not used       
     <margin>
       <num_roi>0</num_roi>    
       <fraction>.05</fraction>
@@ -138,13 +160,17 @@
         </fold>
       </vas>
     </margin>
+ //   
   </IC>
 <QSP>
   <simulation>
     <weight_qsp>0</weight_qsp>
     <t_steadystate>5000</t_steadystate>  
+// Not used 
     <use_resection>0</use_resection>    
-    <t_resection>1000</t_resection> 
+    <t_resection>1000</t_resection>
+//    
+    <init_cancer_cell>9.4e7</init_cancer_cell>
     <start>0</start>
     <step>1</step>
     <n_step>360</n_step>

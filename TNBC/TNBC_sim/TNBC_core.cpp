@@ -111,8 +111,7 @@ void TNBC_Core::initializeSimulation(void){
 			c_tumor.push_back(c);
 		});
 		//std::cout << "num_source: " << c_tumor.size() << std::endl;
-		nr_source_tumor = int(params.getVal(TNBC::PARAM_SOURCES)*ic.getVal(IC_CORE_TUMOR_VAS_FOLD)
-			* params.getVal(TNBC::PARAM_REC_PORT_PROB));
+		nr_source_tumor = int(params.getVal(TNBC::PARAM_SOURCES)*ic.getVal(IC_CORE_TUMOR_VAS_FOLD));
 		rng.shuffle_first_k(c_tumor, nr_source_tumor);
 		for (size_t i = 0; i < nr_source_tumor; i++)
 		{
@@ -137,11 +136,9 @@ void TNBC_Core::initializeSimulation(void){
 				c_normal.push_back(c);				
 			}
 		});
-		nr_source_normal = int(0*params.getVal(TNBC::PARAM_SOURCES)*ic.getVal(IC_MARGIN_NORMAL_VAS_FOLD)
-			* params.getVal(TNBC::PARAM_REC_PORT_PROB));
+		nr_source_normal = int(0*params.getVal(TNBC::PARAM_SOURCES)*ic.getVal(IC_MARGIN_NORMAL_VAS_FOLD));
 		rng.shuffle_first_k(c_normal, nr_source_normal);
-		nr_source_tumor = int(1*params.getVal(TNBC::PARAM_SOURCES)*ic.getVal(IC_MARGIN_TUMOR_VAS_FOLD)
-			* params.getVal(TNBC::PARAM_REC_PORT_PROB));
+		nr_source_tumor = int(1*params.getVal(TNBC::PARAM_SOURCES)*ic.getVal(IC_MARGIN_TUMOR_VAS_FOLD));
 		rng.shuffle_first_k(c_tumor, nr_source_tumor);
 
 		for (size_t i = 0; i < nr_source_normal; i++)
@@ -257,10 +254,11 @@ if (lymphCC > abm_min_cc){
 		double mm1;
 
 		//Entire and partial tumor
-		double SC = 50000;
-
+		// example: SC =  50000
 		//Entire tumor (tumor growth)
-		//double SC = 1;		
+		// SC = 1
+
+		double SC = params.getVal(TNBC::PARAM_CELLS_SCALING_FACTOR);	
 
 		std::cout << "SC:" << SC << std::endl;	
 
