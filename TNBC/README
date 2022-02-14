@@ -1,17 +1,5 @@
 CURRENT STATE OF THE SPQSP TNBC CODE
 
--	TNBC/SP_QSP_TNBC/abm/compartment/LymphCentral.cpp
-
-Line 107 -> while (ss_val[20] < $9.4e7$)
-
--	TNBC/SP_QSP_TNBC/abm/compartment/VoxelContentGen.cpp
-
-Lines 64-65 ->     
-double mean_dist = $0$ * params.getVal(PARAM_VOXEL_SIZE)/1e6;
-    		double sd_dist = $15$ * params.getVal(PARAM_VOXEL_SIZE)/1e6;
-
--------
-
 This spQSP extended version required to change the following lines in two of the shared code files from Gong's original spatial QSP model (https://github.com/popellab/SPQSP_IO/tree/main/SPQSP_IO/SP_QSP_shared/ABM_Base):
 
 -   SP_QSP_shared/ABM_Base/SpatialCompartment.h
