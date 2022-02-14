@@ -1,5 +1,11 @@
 CURRENT STATE OF THE SPQSP TNBC CODE
 
+-   SP_QSP_shared/ABM_Base/SpatialCompartment.h
+
+
+
+-------
+
 This spQSP extended version required to change the following lines in two of the shared code files from Gong's original spatial QSP model (https://github.com/popellab/SPQSP_IO/tree/main/SPQSP_IO/SP_QSP_shared/ABM_Base):
 
 -   SP_QSP_shared/ABM_Base/SpatialCompartment.h
