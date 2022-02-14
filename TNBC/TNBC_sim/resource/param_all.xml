@@ -12,10 +12,10 @@
 	    <ProbCore>0.05</ProbCore>
 	    <MaxCCDens>0.02</MaxCCDens>
 	    <MinCCDens>0</MinCCDens>
-// Do not change  
+// Do not change from here 
       <ShuffleInterval>8</ShuffleInterval>
       <gridshiftInterval>1</gridshiftInterval>
-//       
+// to here      
       <Tumor>
         <XSize>200</XSize>
         <YSize>200</YSize>
@@ -31,7 +31,7 @@
       <nivoOn>0</nivoOn>
       <nivoDoseIntervalTime>14</nivoDoseIntervalTime>
       <nivoDose>2.79e-4</nivoDose>
-// Not used        
+// Not used from here         
       <durvOn>0</durvOn>
       <durvDoseIntervalTime>28</durvDoseIntervalTime>
       <durvDose>9.21e-4</durvDose>      
@@ -41,16 +41,16 @@
       <ipiOn>0</entOn>
       <ipiDoseIntervalTime>42</ipiDoseIntervalTime>
       <ipiDose>9.3e-5</ipiDose> 
-//       
+//  to here     
     </Pharmacokinetics>
-// Not used       
+// Not used from here        
     <cell>
       <PDL1_th>.1</PDL1_th>
       <IFNg_PDL1_half>.11</IFNg_PDL1_half>
       <IFNg_PDL1_n>1.26</IFNg_PDL1_n>
       <PDL1_halflife>.1</PDL1_halflife>
     </cell>
-//   
+//   to here
     <TCell>
       <lifespanMean>100</lifespanMean>
       <lifespanSD>0</lifespanSD>
@@ -58,11 +58,11 @@
       <div_limit>0</div_limit>
       <moveProb>1</moveProb>
       <moveProb_cyt_or_supp>0.167</moveProb_cyt_or_supp>
-// Not used         
+// Not used from here          
       <IL2_release_time>1e20</IL2_release_time>
       <IL2_prolif_th>63460</IL2_prolif_th>
       <IFNg_release_time>1e20</IFNg_release_time>    
-//        
+// to here       
     </TCell>
     <Treg>
       <div_limit_exp>10000000</div_limit_exp>
@@ -80,12 +80,12 @@
       <moveProb>0.055</moveProb>
       <moveProb_csc>0.022</moveProb_csc>
       <mincc>0</mincc>
-// Not used   
+// Not used from here   
       <IFNgUptake>1e-3</IFNgUptake>
-//      
+//  to here   
     </CancerCell>
   </ABM>
-// Not used     
+// Not used from here    
   <Molecular>
     <stepPerSlice>36</stepPerSlice>
     <biofvm>
@@ -121,9 +121,9 @@
     <allMolecularOff>0</allMolecularOff>
     <diffusionOff>0</diffusionOff>
   </Molecular>
-//   
+// to here   
   <IC>
-// Do not change    
+// Do not change from here     
     <core>
       <num_roi>1</num_roi>    
       <stationary>1</stationary>
@@ -141,7 +141,7 @@
       </vas>
     </core>
 //    
-// Not used       
+// Not used from here        
     <margin>
       <num_roi>0</num_roi>    
       <fraction>.05</fraction>
@@ -162,16 +162,16 @@
         </fold>
       </vas>
     </margin>
- //   
+ // to here   
   </IC>
 <QSP>
   <simulation>
     <weight_qsp>0</weight_qsp>
     <t_steadystate>5000</t_steadystate>  
-// Not used 
+// Not used from here  
     <use_resection>0</use_resection>    
     <t_resection>1000</t_resection>
-//    
+// to here    
     <init_cancer_cell>9.4e7</init_cancer_cell>
     <start>0</start>
     <step>1</step>
