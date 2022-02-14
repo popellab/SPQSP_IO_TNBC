@@ -37,32 +37,32 @@ bool VoxelContentGen::get_type_state(const Coord3D& c, RNG& rng,
 	
 
 	//Total tumor (tumor growth)
-
-	//double mean_dist = 0*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	//double sdx_dist = 0.99*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	//double sdy_dist = 0.99*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	//double sdz_dist = 0.99*params.getVal(PARAM_VOXEL_SIZE)/1e6;
+	//params.getVal(PARAM_MEAN_INIT_NORM_DIST) = 0, params.getVal(PARAM_SD_INIT_NORM_DIST) = 0.99
+	//double mean_dist = params.getVal(PARAM_MEAN_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
+	//double sdx_dist = params.getVal(PARAM_SD_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
+	//double sdy_dist = params.getVal(PARAM_SD_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
+	//double sdz_dist = params.getVal(PARAM_SD_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
 
 	//Total tumor
 
-	//double mean_dist = 0*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	//double sdx_dist = 15*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	//double sdy_dist = 15*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	//double sdz_dist = 15*params.getVal(PARAM_VOXEL_SIZE)/1e6;
+	//double mean_dist = params.getVal(PARAM_MEAN_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
+	//double sdx_dist = params.getVal(PARAM_SD_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
+	//double sdy_dist = params.getVal(PARAM_SD_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
+	//double sdz_dist = params.getVal(PARAM_SD_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
 
 
-	//Partial tumor
-	//double mean_dist = 0*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	//double sd_dist = 15*params.getVal(PARAM_VOXEL_SIZE)/1e6;
+	//Partial tumor (3D)
+	//double mean_dist = params.getVal(PARAM_MEAN_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
+	//double sd_dist = params.getVal(PARAM_SD_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
 	//double dx2cc = std::pow(c.x,2);
 	//double dy2cc = std::pow(c.y,2);
 	//double dz2cc = std::pow(c.z,2);
 	//double dist_sourcecc = std::pow(dx2cc+dy2cc+dz2cc, 0.5)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
 	//if (dist_sourcecc <= rng.get_normal(mean_dist,sd_dist))	
 
-	//Partial tumor
-	double mean_dist = 0*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	double sd_dist = 15*params.getVal(PARAM_VOXEL_SIZE)/1e6;
+	//Partial tumor (thin slice)
+	double mean_dist = params.getVal(PARAM_MEAN_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
+	double sd_dist = params.getVal(PARAM_SD_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
 	double dx2cc = std::pow(c.x,2);
 	double dy2cc = std::pow(c.y,2);
 	double dist_sourcecc = std::pow(dx2cc+dy2cc, 0.5)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
@@ -132,7 +132,6 @@ void VoxelContentGen::setup(bool stationary, double cancer_prob,
 	else{
 		C = 1 + l0*(std::pow(l1, dmax) - 1) / (l1 - 1) + l0*l2*std::pow(l1,(dmax - 1));
 	}
-	std::cout << "C:" << C << std::endl;
 	double p ;
 	_celltype_cdf[0] = p = 1 / C * cancer_prob; // joint P
 	p *= l0;

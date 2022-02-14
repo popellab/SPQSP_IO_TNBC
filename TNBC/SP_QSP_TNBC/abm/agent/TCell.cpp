@@ -85,7 +85,7 @@ string TCell::toString()const{
 
 bool TCell::agent_movement_step(double t, double dt, Coord& c){
 	bool move = false;
-	if ((rng.get_unif_01() < params.getVal(PARAM_T_CELL_MOVE_PROB)/6 && (_state == AgentStateEnum::T_CELL_CYT || _state == AgentStateEnum::T_CELL_SUPP)) || (rng.get_unif_01() < params.getVal(PARAM_T_CELL_MOVE_PROB) && _state == AgentStateEnum::T_CELL_EFF))
+	if ((rng.get_unif_01() < params.getVal(PARAM_CYT_OR_SUPP_T_CELL_MOVE_PROB) && (_state == AgentStateEnum::T_CELL_CYT || _state == AgentStateEnum::T_CELL_SUPP)) || (rng.get_unif_01() < params.getVal(PARAM_T_CELL_MOVE_PROB) && _state == AgentStateEnum::T_CELL_EFF))
 	{
 		// move
 		int idx;
@@ -93,28 +93,9 @@ bool TCell::agent_movement_step(double t, double dt, Coord& c){
 		if (_compartment->getOneOpenVoxel(shape->getMoveDestinationVoxels(), 
 			shape->getMoveDirectionAnchor(), _coord, getType(), idx, rng))		
 			{
-
-			double c1 = 0;
-			double c2 = 0;
-			double c3 = 0;
-			double alpha1 = (c.x-0)*(c.x-params.getVal(PARAM_TUMOR_X)+1);
-			double alpha2 = (c.y-0)*(c.y-params.getVal(PARAM_TUMOR_Y)+1);
-			double alpha3 = (c.z-0)*(c.z-params.getVal(PARAM_TUMOR_Z)+1);
-
-			if (alpha1+alpha2+alpha3 == 0 && rng.get_unif_01()<c1){
-				move = false;
-			}
-			else if(alpha1*alpha2+alpha1*alpha3+alpha2*alpha3 == 0 && rng.get_unif_01()<c2){
-				move = false;
-			}
-			else if(alpha1*alpha2*alpha3 == 0 && rng.get_unif_01()<c3){
-				move = false;
-			}
-			else{
 				c = getCellShape()->getMoveDirectionAnchor()[idx] + _coord;
 				move = true;
 			}
-		}
 	}
 	return move;
 
@@ -295,31 +276,12 @@ bool TCell::agent_state_step(double t, double dt, Coord& c, int cc_p, int teff_p
 		if (_compartment->getOneOpenVoxel(shape->getProlifDestinationVoxels(), 
 			shape->getProlifDestinationAnchor(), _coord, getType(), idx, rng))
 			{
-			double c1 = 0;
-			double c2 = 0;
-			double c3 = 0;
-			double alpha1 = (c.x-0)*(c.x-params.getVal(PARAM_TUMOR_X)+1);
-			double alpha2 = (c.y-0)*(c.y-params.getVal(PARAM_TUMOR_Y)+1);
-			double alpha3 = (c.z-0)*(c.z-params.getVal(PARAM_TUMOR_Z)+1);
-
-			if (alpha1+alpha2+alpha3 == 0 && rng.get_unif_01()<c1){
-				divide = false;
-			}
-			else if(alpha1*alpha2+alpha1*alpha3+alpha2*alpha3 == 0 && rng.get_unif_01()<c2){
-				divide = false;
-			}
-			else if(alpha1*alpha2*alpha3 == 0 && rng.get_unif_01()<c3){
-				divide = false;
-			}
-			else{
 			c = getCellShape()->getProlifDestinationAnchor()[idx] + _coord;				
 				divide = true;
 				_divide_flag = true;
 				_divide_limit -= 1;
 				_divide_cd = params.getVal(PARAM_T_DIV_INTERVAL);	
 			}
-		}
-
 	}
 
 	_count_neighbor_cancer = 0;

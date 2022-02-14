@@ -177,7 +177,7 @@ void Tumor::timeSlice(unsigned long slice, int cc_p, int teff_p, int treg_p, int
 
 	//std::cout << "RNG check (" << slice << ") rec: " << rng.get_unif_01() << std::endl;
 
-	for (int I = 0; I < 111; I++)
+	for (int I = 0; I < params.getVal(PARAM_MIGRATED_VOXELS); I++)
 	{
 	time_slice_movement(t, dt);
 	}
@@ -393,26 +393,14 @@ void Tumor::shift_grid(Coord3D& c_shift) {
 }
 
 void Tumor::time_slice_recruitment(double t, int cc_p, int teff_p, int treg_p, int mdsc_p, int texh_p){
-	
-	double V_voxel = std::pow(double(params.getVal(PARAM_VOXEL_SIZE)) / 1e6, 3);
-	//double dist_min = std::pow(cc_p/params.getVal(TNBC::PARAM_TUMOR_Z)*A_voxel/PI,0.5)*0.9-5e-05;	
-	//double dist_max = std::pow(cc_p/params.getVal(TNBC::PARAM_TUMOR_Z)*A_voxel/PI,0.5)*0.9+5e-05;	
-	double dist_edge = std::pow(200*cc_p*V_voxel*3/(4*PI),0.333)*1.1;
-	double dist_median = std::pow(200*cc_p*V_voxel*3/(4*PI),0.333);
-	//double sigma = 2;
-	//double mu = 0;
-	//double median = std::exp(mu);
-	double lambda = 10;
-	double median = std::log(2)/lambda;
-	double p1 = 1;
-	double p2 = 0.001;
-	double p3 = 0.05;
-	double a1 = 0.02;
-	double a2 = 0;
-	int min_cc = -2;
-	int max_cc = 2;
-	//double prob_noise = 0.01; 
 
+	double p_max = params.getVal(PARAM_MAX_PROB_IF);
+	double p_min = params.getVal(PARAM_MIN_PROB_IF);
+	double p_core = params.getVal(PARAM_PROB_CORE);
+	double max_cc_dens = params.getVal(PARAM_MAX_CC_DENS);
+	double min_cc_dens = params.getVal(PARAM_MIN_CC_DENS);
+	int min_cc = -(params.getVal(PARAM_LENGTH_NORM_DENS)-1)/2;
+	int max_cc = (params.getVal(PARAM_LENGTH_NORM_DENS)-1)/2;
 
 
 	// CD8
@@ -424,8 +412,6 @@ void Tumor::time_slice_recruitment(double t, int cc_p, int teff_p, int treg_p, i
 		int Texh_init = std::floor(_concentration_t_exh*cc_p/_concentration_cc);			
 		int Treg_init = std::floor(_concentration_t_reg_tum*cc_p/_concentration_cc);
 		int MDSC_init = std::floor(_concentration_mdsc*cc_p/_concentration_cc);	
-
-//if (teff_p>1e20){
 
 		if ((teff_p > 0) || (treg_p > 0) || (mdsc_p > 0) || (texh_p > 0) || (Tcell_init > 0) || (Texh_init > 0) || (Treg_init > 0) || (MDSC_init > 0)){		
 
@@ -453,22 +439,8 @@ void Tumor::time_slice_recruitment(double t, int cc_p, int teff_p, int treg_p, i
 						}
 					}
 				}							
-				//for (int i = min_cc; i < max_cc+1; i++)
-				//{
-				//	for (int j = min_cc; j < max_cc+1; j++)
-				//	{
-				//			crd_p.x = crd.x + i;
-				//			crd_p.y = crd.y + j;
-				//			if ((crd_p.x >=0 && crd_p.x < params.getVal(TNBC::PARAM_TUMOR_X)) 
-				//			&& (crd_p.y >= 0 && crd_p.y < params.getVal(TNBC::PARAM_TUMOR_Y))){
-				//				bool found = _agGrid(crd_p)->countNumAgentByType(AgentTypeEnum::CELL_TYPE_CANCER, countc, true);	
-				//				ncc = found + ncc;
-				//				nvox += 1;					
-				//		}
-				//	}
-				//}	
 				ndiv = ncc/nvox;
-				if ((ndiv >= a2 && ndiv < a1 && rng.get_unif_01() < ((p1-p2)/(a1-a2))*ndiv+p1-(p1-p2)/(a1-a2)*a1) || (ndiv >=a1 && rng.get_unif_01() < p3)){			
+				if ((ndiv >= min_cc_dens && ndiv < max_cc_dens && rng.get_unif_01() < ((p_max-p_min)/(max_cc_dens-min_cc_dens))*ndiv+p_max-(p_max-p_min)/(max_cc_dens-min_cc_dens)*max_cc_dens) || (ndiv >=max_cc_dens && rng.get_unif_01() < p_core)){			
 					NC += 1;
 				}
 		}
@@ -507,12 +479,8 @@ void Tumor::time_slice_recruitment(double t, int cc_p, int teff_p, int treg_p, i
 				}	
 
 				ndiv = ncc/nvox;
-				if ((ndiv >= a2 && ndiv < a1 && rng.get_unif_01() < ((p1-p2)/(a1-a2))*ndiv+p1-(p1-p2)/(a1-a2)*a1) || (ndiv >=a1 && rng.get_unif_01() < p3)){
-				double dist_source_tr = median*(dist_source-dist_edge)/(dist_median-dist_edge);
-				//double prob_lognorm = 0.5 - 0.5*std::erf((std::log(dist_source_tr)-mu)/(std::sqrt(2)*sigma));
-				double prob_exp = std::exp(-lambda*(dist_source_tr));
+				if ((ndiv >= min_cc_dens && ndiv < max_cc_dens && rng.get_unif_01() < ((p_max-p_min)/(max_cc_dens-min_cc_dens))*ndiv+p_max-(p_max-p_min)/(max_cc_dens-min_cc_dens)*max_cc_dens) || (ndiv >=max_cc_dens && rng.get_unif_01() < p_core)){
 				if (count_tcell < Tcell_init){
-				//if (count_tcell < Tcell_init){	
 				recruitOneCellInMooreNeighborhood(dummy0, crd, rng);
 				_stats.incRecruit(dummy0->getType(), dummy0->getState());
 				auto pT = dynamic_cast<TCell*>(_vecAgent.back());
@@ -557,12 +525,8 @@ void Tumor::time_slice_recruitment(double t, int cc_p, int teff_p, int treg_p, i
 				}	
 
 				ndiv = ncc/nvox;
-				if ((ndiv >= a2 && ndiv < a1 && rng.get_unif_01() < ((p1-p2)/(a1-a2))*ndiv+p1-(p1-p2)/(a1-a2)*a1) || (ndiv >=a1 && rng.get_unif_01() < p3)){
-				double dist_source_tr = median*(dist_source-dist_edge)/(dist_median-dist_edge);
-				//double prob_lognorm = 0.5 - 0.5*std::erf((std::log(dist_source_tr)-mu)/(std::sqrt(2)*sigma));
-				double prob_exp = std::exp(-lambda*(dist_source_tr));
+				if ((ndiv >= min_cc_dens && ndiv < max_cc_dens && rng.get_unif_01() < ((p_max-p_min)/(max_cc_dens-min_cc_dens))*ndiv+p_max-(p_max-p_min)/(max_cc_dens-min_cc_dens)*max_cc_dens) || (ndiv >=max_cc_dens && rng.get_unif_01() < p_core)){
 				if (count_tcell < Tcell_init){
-				//if (count_tcell < Tcell_init){	
 				recruitOneCellInMooreNeighborhood(dummy0, crd, rng);
 				_stats.incRecruit(dummy0->getType(), dummy0->getState());
 				auto pT = dynamic_cast<TCell*>(_vecAgent.back());
@@ -608,12 +572,8 @@ void Tumor::time_slice_recruitment(double t, int cc_p, int teff_p, int treg_p, i
 				}	
 
 				ndiv = ncc/nvox;
-				if ((ndiv >= a2 && ndiv < a1 && rng.get_unif_01() < ((p1-p2)/(a1-a2))*ndiv+p1-(p1-p2)/(a1-a2)*a1) || (ndiv >=a1 && rng.get_unif_01() < p3)){
-				double dist_source_tr = median*(dist_source-dist_edge)/(dist_median-dist_edge);		
-				//double prob_lognorm = 0.5 - 0.5*std::erf((std::log(dist_source_tr)-mu)/(std::sqrt(2)*sigma));	
-				double prob_exp = std::exp(-lambda*(dist_source_tr));									
+				if ((ndiv >= min_cc_dens && ndiv < max_cc_dens && rng.get_unif_01() < ((p_max-p_min)/(max_cc_dens-min_cc_dens))*ndiv+p_max-(p_max-p_min)/(max_cc_dens-min_cc_dens)*max_cc_dens) || (ndiv >=max_cc_dens && rng.get_unif_01() < p_core)){							
 				if (count_treg < Treg_init){
-				//	if (count_treg < Treg_init){
 				recruitOneCellInMooreNeighborhood(Treg_dummy0, crd, rng);
 				_stats.incRecruit(Treg_dummy0->getType(), Treg_dummy0->getState());
 				auto pT = dynamic_cast<Treg*>(_vecAgent.back());
@@ -658,12 +618,8 @@ void Tumor::time_slice_recruitment(double t, int cc_p, int teff_p, int treg_p, i
 				}	
 
 				ndiv = ncc/nvox;
-				if ((ndiv >= a2 && ndiv < a1 && rng.get_unif_01() < ((p1-p2)/(a1-a2))*ndiv+p1-(p1-p2)/(a1-a2)*a1) || (ndiv >=a1 && rng.get_unif_01() < p3)){
-				double dist_source_tr = median*(dist_source-dist_edge)/(dist_median-dist_edge);		
-				//double prob_lognorm = 0.5 - 0.5*std::erf((std::log(dist_source_tr)-mu)/(std::sqrt(2)*sigma));
-				double prob_exp = std::exp(-lambda*(dist_source_tr));							
+				if ((ndiv >= min_cc_dens && ndiv < max_cc_dens && rng.get_unif_01() < ((p_max-p_min)/(max_cc_dens-min_cc_dens))*ndiv+p_max-(p_max-p_min)/(max_cc_dens-min_cc_dens)*max_cc_dens) || (ndiv >=max_cc_dens && rng.get_unif_01() < p_core)){						
 				if (count_mdsc < MDSC_init){
-				//	if (count_mdsc < MDSC_init){
 				recruitOneCellInMooreNeighborhood(MDSC_dummy0, crd, rng);
 				_stats.incRecruit(MDSC_dummy0->getType(), MDSC_dummy0->getState());
 				auto pT = dynamic_cast<MDSC*>(_vecAgent.back());
@@ -674,7 +630,6 @@ void Tumor::time_slice_recruitment(double t, int cc_p, int teff_p, int treg_p, i
 		
 	}
 
-//double F = std::pow(params.getVal(PARAM_VOXEL_SIZE)/1e6,2)*params.getVal(TNBC::PARAM_TUMOR_X)*params.getVal(TNBC::PARAM_TUMOR_Y)/(PI*std::pow(dist_edge,2));
 	double F;
 	if (NC!=0){
 		F = params.getVal(PARAM_SOURCES)/NC;
@@ -683,9 +638,7 @@ void Tumor::time_slice_recruitment(double t, int cc_p, int teff_p, int treg_p, i
 			F = 0;
 		}
 	if (teff_p!=0){
-		//double F = 1;
-		
-//std::cout << "FFFFF: " << F << std::endl;
+
 	const auto dummy = _tInitDummy;	
 	double pRec = (get_T_recruitment_prob(F*_concentration_t_cyt/_concentration_t_eff_tum * teff_p / (params.getVal(PARAM_SOURCES)), params.getVal(PARAM_TEFF_RECRUIT_K)));
 	std::cout << "rec prob (Teff): " << pRec<< std::endl;
@@ -722,12 +675,8 @@ void Tumor::time_slice_recruitment(double t, int cc_p, int teff_p, int treg_p, i
 				}	
 
 				ndiv = ncc/nvox;
-				if ((ndiv >= a2 && ndiv < a1 && rng.get_unif_01() < ((p1-p2)/(a1-a2))*ndiv+p1-(p1-p2)/(a1-a2)*a1) || (ndiv >=a1 && rng.get_unif_01() < p3)){					
-				double dist_source_tr = median*(dist_source-dist_edge)/(dist_median-dist_edge);	
-				//double prob_lognorm = (0.5 - 0.5*std::erf((std::log(dist_source_tr)-mu)/(std::sqrt(2)*sigma)));
-				double prob_exp = std::exp(-lambda*(dist_source_tr));					
+				if ((ndiv >= min_cc_dens && ndiv < max_cc_dens && rng.get_unif_01() < ((p_max-p_min)/(max_cc_dens-min_cc_dens))*ndiv+p_max-(p_max-p_min)/(max_cc_dens-min_cc_dens)*max_cc_dens) || (ndiv >=max_cc_dens && rng.get_unif_01() < p_core)){										
 		if (rn_Teff < pRec) {
-			//if (rn_Teff < pRec) {
 			bool rec = recruitOneCellInMooreNeighborhood(dummy, crd, rng);
 				if (rec)
 			{
@@ -777,12 +726,8 @@ void Tumor::time_slice_recruitment(double t, int cc_p, int teff_p, int treg_p, i
 				}	
 
 				ndiv = ncc/nvox;
-				if ((ndiv >= a2 && ndiv < a1 && rng.get_unif_01() < ((p1-p2)/(a1-a2))*ndiv+p1-(p1-p2)/(a1-a2)*a1) || (ndiv >=a1 && rng.get_unif_01() < p3)){	
-				double dist_source_tr = median*(dist_source-dist_edge)/(dist_median-dist_edge);		
-				//double prob_lognorm = (0.5 - 0.5*std::erf((std::log(dist_source_tr)-mu)/(std::sqrt(2)*sigma)));	
-				double prob_exp = std::exp(-lambda*(dist_source_tr));									
+				if ((ndiv >= min_cc_dens && ndiv < max_cc_dens && rng.get_unif_01() < ((p_max-p_min)/(max_cc_dens-min_cc_dens))*ndiv+p_max-(p_max-p_min)/(max_cc_dens-min_cc_dens)*max_cc_dens) || (ndiv >=max_cc_dens && rng.get_unif_01() < p_core)){										
 		if (rn_Treg < pRec_Treg) {
-			//if (rn_Treg < pRec_Treg) {
 			bool rec = recruitOneCellInMooreNeighborhood(Treg_dummy, crd, rng);
 				if (rec)
 			{
@@ -841,12 +786,8 @@ void Tumor::time_slice_recruitment(double t, int cc_p, int teff_p, int treg_p, i
 				}	
 
 				ndiv = ncc/nvox;
-				if ((ndiv >= a2 && ndiv < a1 && rng.get_unif_01() < ((p1-p2)/(a1-a2))*ndiv+p1-(p1-p2)/(a1-a2)*a1) || (ndiv >=a1 && rng.get_unif_01() < p3)){
-				double dist_source_tr = median*(dist_source-dist_edge)/(dist_median-dist_edge);	
-				//double prob_lognorm = (0.5 - 0.5*std::erf((std::log(dist_source_tr)-mu)/(std::sqrt(2)*sigma)));		
-				double prob_exp = std::exp(-lambda*(dist_source_tr));			
+				if ((ndiv >= min_cc_dens && ndiv < max_cc_dens && rng.get_unif_01() < ((p_max-p_min)/(max_cc_dens-min_cc_dens))*ndiv+p_max-(p_max-p_min)/(max_cc_dens-min_cc_dens)*max_cc_dens) || (ndiv >=max_cc_dens && rng.get_unif_01() < p_core)){		
 		if (rng.get_unif_01() < pRec_MDSC) {
-			//if (rng.get_unif_01() < pRec_MDSC) {
 			bool rec = recruitOneCellInMooreNeighborhood(MDSC_dummy, crd, rng);						
 				if (rec)
 			{
@@ -855,7 +796,6 @@ void Tumor::time_slice_recruitment(double t, int cc_p, int teff_p, int treg_p, i
 			}
 		}
 		}
-//	}
 	}
 		}
 		}
@@ -1372,29 +1312,10 @@ void Tumor::createClusterInitCell(icProperty &ic) {
 				shape->getProlifDestinationAnchor(), c, type, idx, rng);
 			if (spaceFound)
 			{
-			
-			double c1 = 0;
-			double c2 = 0;
-			double c3 = 0;
-			double alpha1 = (c.x-0)*(c.x-params.getVal(PARAM_TUMOR_X)+1);
-			double alpha2 = (c.y-0)*(c.y-params.getVal(PARAM_TUMOR_Y)+1);
-			double alpha3 = (c.z-0)*(c.z-params.getVal(PARAM_TUMOR_Z)+1);
-
-			if (alpha1+alpha2+alpha3 == 0 && rng.get_unif_01()<c1){
-				break;
-			}
-			else if(alpha1*alpha2+alpha1*alpha3+alpha2*alpha3 == 0 && rng.get_unif_01()<c2){
-				break;
-			}
-			else if(alpha1*alpha2*alpha3 == 0 && rng.get_unif_01()<c3){
-				break;
-			}
-			else{
 				cNew = shape->getProlifDestinationAnchor()[idx] + c;
 				createOneInitCell(type, state, cNew);
 				count++;
 				nextCenter.push(cNew);
-			}
 			}
 		}
 	}

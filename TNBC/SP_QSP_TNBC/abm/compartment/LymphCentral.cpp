@@ -97,14 +97,12 @@ void LymphCentral::setup_param(LymphBloodParam& p){
 		double tumor_volume = QSP_CONST(QSP_VT_MIN) + (QSP_CONST(QSP_VOL_CELL) * (ss_val[20] + ss_val[18]) + QSP_CONST(QSP_VOL_TCELL) * (ss_val[19] + ss_val[21] + ss_val[22])) / AVOGADROS;
 		double tumor_volume_ref = (PI * std::pow(QSP_CONST(QSP_INIT_TUM_DIAM),3)) / 6;
 
-		//Total tumor (tumor growth)
-		//while (ss_val[20]<1) 
+		//Total tumor (tumor growth): params.getVal(PARAM_QSP_INIT_CANCER_CELL) = 1
 
-		//Total tumor
-		//while (ss_val[20]<8.75e7) 
+		//Total tumor: params.getVal(PARAM_QSP_INIT_CANCER_CELL) = 8.75e7
 
 		//Partial tumor
-		while (ss_val[20]<9.4e7) 		
+		while (ss_val[20]<params.getVal(PARAM_QSP_INIT_CANCER_CELL)) 		
 
 		//QSP solutions
 		//while (tt < tss && tumor_volume < tumor_volume_ref)
@@ -281,33 +279,6 @@ void LymphCentral::update_qsp_var(const std::vector<double>& var_abm){
 	double cx_molec = var_abm[Tumor::TUMEX_CX];
 	double Texh_molec = var_abm[Tumor::TUMEX_TEXH];
 
-	// update system
-	//double p0 = GET_VAR(QSP_ID_P0);
-	//double p1 = GET_VAR(QSP_ID_P1);
-	//double ckine = GET_VAR(QSP_ID_C);
-
-	//double factor_p0 = QSP_CONST(QSP_N_T0_CLONES) * QSP_CONST(QSP_P0_C1);
-	//double factor_p1 = QSP_CONST(QSP_N_T1_CLONES) * QSP_CONST(QSP_P1_C1);
-	//double factor_DAMP = QSP_CONST(QSP_DAMPS);
-
-	//p0 += cc_death_total * factor_p0;
-	//p1 += cc_death_total *  factor_p1;
-	//ckine += cc_death_Teff * factor_DAMP;
-
-	//SET_VAR(QSP_ID_P0, p0);
-	//SET_VAR(QSP_ID_P1, p1);
-	//SET_VAR(QSP_ID_C, ckine);
-
-	//double cent_t_eff = GET_VAR(QSP_ID_CENT_TEFF);
-	//double cent_t_reg = GET_VAR(QSP_ID_CENT_TREG);
-
-	//cent_t_eff -= Teff_recruit;
-	//cent_t_reg -= Treg_recruit;
-
-	//SET_VAR_RAW(QSP_ID_CENT_TEFF, cent_t_eff/scalar);
-	//SET_VAR(QSP_ID_CENT_TEFF, cent_t_eff);
-	//SET_VAR_RAW(QSP_ID_CENT_TREG, cent_t_reg/scalar);	
-	//SET_VAR(QSP_ID_CENT_TREG, cent_t_reg);
 
 	SET_VAR_RAW(QSP_ID_TUM_C1, cc_molec);
 	SET_VAR(QSP_ID_TUM_C1, (cc_molec)*scalar);

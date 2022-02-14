@@ -53,27 +53,8 @@ bool Treg::agent_movement_step(double t, double dt, Coord& c){
 		if (_compartment->getOneOpenVoxel(shape->getMoveDestinationVoxels(), 
 			shape->getMoveDirectionAnchor(), _coord, getType(), idx, rng))
 		{
-
-			double c1 = 0;
-			double c2 = 0;
-			double c3 = 0;
-			double alpha1 = (c.x-0)*(c.x-params.getVal(PARAM_TUMOR_X)+1);
-			double alpha2 = (c.y-0)*(c.y-params.getVal(PARAM_TUMOR_Y)+1);
-			double alpha3 = (c.z-0)*(c.z-params.getVal(PARAM_TUMOR_Z)+1);
-
-			if (alpha1+alpha2+alpha3 == 0 && rng.get_unif_01()<c1){
-				move = false;
-			}
-			else if(alpha1*alpha2+alpha1*alpha3+alpha2*alpha3 == 0 && rng.get_unif_01()<c2){
-				move = false;
-			}
-			else if(alpha1*alpha2*alpha3 == 0 && rng.get_unif_01()<c3){
-				move = false;
-			}
-			else{
 			c = getCellShape()->getMoveDirectionAnchor()[idx] + _coord;				
 				move = true;
-			}
 		}
 	}
 	return move;
@@ -125,29 +106,11 @@ bool Treg::agent_state_step(double t, double dt, Coord& c, int cc_p, int teff_p,
 			if (_compartment->getOneOpenVoxel(shape->getProlifDestinationVoxels(), 
 				shape->getProlifDestinationAnchor(), _coord, getType(), idx, rng))
 		{
-			double c1 = 0;
-			double c2 = 0;
-			double c3 = 0;
-			double alpha1 = (c.x-0)*(c.x-params.getVal(PARAM_TUMOR_X)+1);
-			double alpha2 = (c.y-0)*(c.y-params.getVal(PARAM_TUMOR_Y)+1);
-			double alpha3 = (c.z-0)*(c.z-params.getVal(PARAM_TUMOR_Z)+1);
-
-			if (alpha1+alpha2+alpha3 == 0 && rng.get_unif_01()<c1){
-				divide = false;
-			}
-			else if(alpha1*alpha2+alpha1*alpha3+alpha2*alpha3 == 0 && rng.get_unif_01()<c2){
-				divide = false;
-			}
-			else if(alpha1*alpha2*alpha3 == 0 && rng.get_unif_01()<c3){
-				divide = false;
-			}
-			else{
 			c = getCellShape()->getProlifDestinationAnchor()[idx] + _coord;				
 				divide = true;
 				_divide_limit_Treg_exp -= 1;
 				_divide_cd_Treg_exp = int(params.getVal(PARAM_TREG_EXP_INTERVAL_SLICE)/(ArgI / (ArgI + params.getVal(PARAM_EC50_ARGI_TREG)) * (1-tregul/(tumvol*params.getVal(PARAM_TREGMAX)))) + .5);	
 							
-			}
 		}	
 		}
 
