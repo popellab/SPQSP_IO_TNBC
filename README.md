@@ -87,7 +87,7 @@ https://www.boost.org/doc/libs/1_70_0/more/getting_started/unix-variants.html
 `$ ./b2 install` <br />
 
 ## Model Simulation 
-The Makefile of this model is available at: `~/TNBC_omics/TNBC_single/linux/` <br />
-`$ make TNBC_s_sim` <br />
-`$ ./TNBC_s_sim -h` <br />
+The Makefile of this model is available at: `~/TNBC/TNBC_sim/linux/` <br />
+`$ make TNBC_sim` <br />
+`$ ./TNBC_sim -h` <br />
 For all options to configure the simulation
