@@ -1,0 +1,594 @@
+## load Xming 
+## load R in Ubuntu
+
+library("spatstat")
+library(gtools)
+library(MASS)
+library(ggplot2)
+library(viridis)
+
+theme_set(theme_bw(base_size = 16))
+
+sigma = 0.1
+sigma1 = 0.1
+sigma5 = 1
+sigma8 = 3
+sigma10 = 5
+xlim = 150
+zlim = 5
+voxel_size = 0.02
+Scale = 1/(voxel_size)
+center = xlim/Scale/2
+Psc = 0.068
+Pp = 0.0083
+Diff_factor = 3
+Coarse_grained_factor = 50000^(1/3)
+Diff = voxel_size/(21600)*Pp*50000^(1/3)*Diff_factor/Coarse_grained_factor
+Rateperday = 0.005
+Rate = Rateperday/86400
+xref = Diff/Rate
+lim = xlim/Scale/xref
+
+ldf <- list() # creates a list
+listcsv <- dir(pattern = "*.csv") # creates the list of all the csv files in the directory
+listcsv <- mixedsort(sort(listcsv)) 
+
+CM <- matrix(0, nrow = 7, ncol = 30)
+CM_SD <- matrix(0, nrow = 7, ncol = 30)
+interval = 10
+
+for (k in seq(from=4200, to=4200, by=interval)){
+ ldf[[k]] <- read.csv(listcsv[k])   
+	data2 <- ldf[[k]]
+
+print(k)
+
+dx2 <- rep(0, 16384)
+dy2 <- rep(0, 16384)
+dz2 <- rep(0, 16384)
+dist_source <- rep(0, 16384)
+
+CCa <- data2[data2[,"Type"]==1,]
+for (i in 70:79){
+	if (i==70){
+	CC2a <- CCa[CCa[,"z"]==72,]
+	}
+	else{
+	CC2pa <- CCa[CCa[,"z"]==i,]
+	CC2a <- rbind(CC2a,CC2pa)
+	}
+}
+
+CCst2 <- data2[data2[,"Type"]==1,]
+CCst <- CCst2[CCst2[,"State"]==6,]
+for (i in 70:79){
+	if (i==70){
+	CC2st <- CCst[CCst[,"z"]==72,]
+	}
+	else{
+	CC2pst <- CCst[CCst[,"z"]==i,]
+	CC2st <- rbind(CC2st,CC2pst)
+	}
+}
+
+CCP2 <- data2[data2[,"Type"]==1,]
+CCP <- CCP2[CCP2[,"State"]==7,]
+for (i in 70:79){
+	if (i==70){
+	CC2P <- CCP[CCP[,"z"]==72,]
+	}
+	else{
+	CC2pP <- CCP[CCP[,"z"]==i,]
+	CC2P <- rbind(CC2P,CC2pP)
+	}
+}
+
+CCse2 <- data2[data2[,"Type"]==1,]
+CCse <- CCse2[CCse2[,"State"]==8,]
+for (i in 70:79){
+	if (i==70){
+	CC2se <- CCse[CCse[,"z"]==72,]
+	}
+	else{
+	CC2pse <- CCse[CCse[,"z"]==i,]
+	CC2se <- rbind(CC2se,CC2pse)
+	}
+}
+
+CCb <- data2[data2[,"Type"]==2,]
+for (i in 70:79){
+	if (i==70){
+	CC2b <- CCb[CCb[,"z"]==72,]
+	}
+	else{
+	CC2pb <- CCb[CCb[,"z"]==i,]
+	CC2b <- rbind(CC2b,CC2pb)
+	}
+}
+
+CCeff2 <- data2[data2[,"Type"]==2,]
+CCeff <- CCeff2[CCeff2[,"State"]==3,]
+for (i in 70:79){
+	if (i==70){
+	CC2eff <- CCeff[CCeff[,"z"]==72,]
+	}
+	else{
+	CC2peff <- CCeff[CCeff[,"z"]==i,]
+	CC2eff <- rbind(CC2eff,CC2peff)
+	}
+}
+
+CCsup2 <- data2[data2[,"Type"]==2,]
+CCsup <- CCsup2[CCsup2[,"State"]==5,]
+for (i in 70:79){
+	if (i==70){
+	CC2sup <- CCsup[CCsup[,"z"]==72,]
+	}
+	else{
+	CC2psup <- CCsup[CCsup[,"z"]==i,]
+	CC2sup <- rbind(CC2sup,CC2psup)
+	}
+}
+
+CCcyt2 <- data2[data2[,"Type"]==2,]
+CCcyt <- CCcyt2[CCcyt2[,"State"]==4,]
+for (i in 70:79){
+	if (i==70){
+	CC2cyt <- CCcyt[CCcyt[,"z"]==72,]
+	}
+	else{
+	CC2pcyt <- CCcyt[CCcyt[,"z"]==i,]
+	CC2cyt <- rbind(CC2cyt,CC2pcyt)
+	}
+}
+
+CCreg <- data2[data2[,"Type"]==3,]
+for (i in 70:79){
+	if (i==70){
+	CC2reg2 <- CCreg[CCreg[,"z"]==72,]
+	}
+	else{
+	CC2preg <- CCreg[CCreg[,"z"]==i,]
+	CC2reg2 <- rbind(CC2reg2,CC2preg)
+	}
+}
+
+MDSC <- data2[data2[,"Type"]==4,]
+for (i in 70:79){
+	if (i==70){
+	MDSC2 <- MDSC[MDSC[,"z"]==72,]
+	}
+	else{
+	MDSCp <- MDSC[MDSC[,"z"]==i,]
+	MDSC2 <- rbind(MDSC2,MDSCp)
+	}
+}
+
+
+yyst<-CC2st$y
+xxst<-CC2st$x
+CC3st <- ppp(xxst,yyst,c(0,(xlim-1)),c(0,(xlim-1)))
+CC_densityst <- density(CC3st,sigma)
+CCELLst <- rescale(CC_densityst,Scale)
+C_CELLst <- CCELLst/(voxel_size^2*zlim/4)
+
+yyP<-CC2P$y
+xxP<-CC2P$x
+CC3P <- ppp(xxP,yyP,c(0,(xlim-1)),c(0,(xlim-1)))
+CC_densityP <- density(CC3P,sigma)
+CCELLP <- rescale(CC_densityP,Scale)
+C_CELLP <- CCELLP/(voxel_size^2*zlim/4)
+
+yyse<-CC2se$y
+xxse<-CC2se$x
+CC3se <- ppp(xxse,yyse,c(0,(xlim-1)),c(0,(xlim-1)))
+CC_densityse <- density(CC3se,sigma)
+CCELLse <- rescale(CC_densityse,Scale)
+C_CELLse <- CCELLse/(voxel_size^2*zlim/4)
+
+yya<-CC2a$y
+xxa<-CC2a$x
+CC3a <- ppp(xxa,yya,c(0,(xlim-1)),c(0,(xlim-1)))
+CC_densitya1 <- density(CC3a,sigma1)
+CCELLa1 <- rescale(CC_densitya1,Scale)
+C_CELLa1 <- CCELLa1/(voxel_size^2*zlim/4)
+
+CC_densitya5 <- density(CC3a,sigma5)
+CCELLa5 <- rescale(CC_densitya5,Scale)
+C_CELLa5 <- CCELLa5/(voxel_size^2*zlim/4)
+
+CC_densitya8 <- density(CC3a,sigma8)
+CCELLa8 <- rescale(CC_densitya8,Scale)
+C_CELLa8 <- CCELLa8/(voxel_size^2*zlim/4)
+
+CC_densitya10 <- density(CC3a,sigma10)
+CCELLa10 <- rescale(CC_densitya10,Scale)
+C_CELLa10 <- CCELLa10/(voxel_size^2*zlim/4)
+
+CC_densitya <- density(CC3a,sigma)
+CCELLa <- rescale(CC_densitya,Scale)
+C_CELLa <- CCELLa/(voxel_size^2*zlim/4)
+
+for (i in 1:128){
+	for (j in 1:128){
+		if (C_CELLa1[i,j] < 800){
+			C_CELLa[i,j] = C_CELLa1[i,j]
+		}
+		else if(C_CELLa1[i,j] >= 800 && C_CELLa1[i,j] < 1600){
+			C_CELLa[i,j] = C_CELLa5[i,j]
+		}		
+		else{
+			C_CELLa[i,j] = C_CELLa10[i,j]
+		}
+	}
+}
+
+yy<-CC2b$y
+xx<-CC2b$x
+CC3b <- ppp(xx,yy,c(0,(xlim-1)),c(0,(xlim-1)))
+CC_densityb <- density(CC3b,sigma)
+CCELLb <- rescale(CC_densityb,Scale)
+C_CELLb <- CCELLb/(voxel_size^2*zlim/(6*4))
+
+yycyt<-CC2cyt$y
+xxcyt<-CC2cyt$x
+CC3cyt <- ppp(xxcyt,yycyt,c(0,(xlim-1)),c(0,(xlim-1)))
+CC_densitycyt <- density(CC3cyt,sigma)
+CCELLcyt <- rescale(CC_densitycyt,Scale)
+C_CELLcyt <- CCELLcyt/(voxel_size^2*zlim/(6*4))
+
+yysup<-CC2sup$y
+xxsup<-CC2sup$x
+CC3sup <- ppp(xxsup,yysup,c(0,(xlim-1)),c(0,(xlim-1)))
+CC_densitysup <- density(CC3sup,sigma)
+CCELLsup <- rescale(CC_densitysup,Scale)
+C_CELLsup <- CCELLsup/(voxel_size^2*zlim/(6*4))
+
+yyeff<-CC2eff$y
+xxeff<-CC2eff$x
+CC3eff <- ppp(xxeff,yyeff,c(0,(xlim-1)),c(0,(xlim-1)))
+CC_densityeff <- density(CC3eff,sigma)
+CCELLeff <- rescale(CC_densityeff,Scale)
+C_CELLeff <- CCELLeff/(voxel_size^2*zlim/(6*4))
+
+yyreg<-CC2reg2$y
+xxreg<-CC2reg2$x
+CC3reg <- ppp(xxreg,yyreg,c(0,(xlim-1)),c(0,(xlim-1)))
+CC_densityreg <- density(CC3reg,sigma)
+CCELLreg <- rescale(CC_densityreg,Scale)
+C_CELLreg <- CCELLreg/(voxel_size^2*zlim/(6*4))
+
+yymdsc<-MDSC2$y
+xxmdsc<-MDSC2$x
+MDSC3 <- ppp(xxmdsc,yymdsc,c(0,(xlim-1)),c(0,(xlim-1)))
+CC_densitymdsc <- density(MDSC3,sigma)
+CCELLmdsc <- rescale(CC_densitymdsc,Scale)
+C_CELLmdsc <- CCELLmdsc/(voxel_size^2*zlim/4)
+
+get_density <- function(x, y, ...) {
+   dens <- MASS::kde2d(x, y, ...)
+   ix <- findInterval(x, dens$x)
+   iy <- findInterval(y, dens$y)
+   ii <- cbind(ix, iy)
+   return(dens$z[ii])
+ }
+
+for (m in seq(from=1, to=10, by=1)){
+
+if (m==1){
+	CD <- data.frame(C_CELLa)
+	CELLDATA = data2[data2[,"Type"]==1,]
+    CELL_TYPE = "CC"
+	ymax <- 10000
+	F = 1
+
+ymaxCC = 10000
+CC2a$x <- CC2a$x/Scale/xref-lim/2
+CC2a$y <- CC2a$y/Scale/xref-lim/2
+CC2st$x <- CC2st$x/Scale/xref-lim/2
+CC2st$y <- CC2st$y/Scale/xref-lim/2
+CC2se$x <- CC2se$x/Scale/xref-lim/2
+CC2se$y <- CC2se$y/Scale/xref-lim/2
+CCT <- data.frame(CC2a$x,CC2a$y)
+CCTst <- data.frame(CC2st$x,CC2st$y)
+CCTse <- data.frame(CC2se$x,CC2se$y)
+
+  ggplot(CCT, aes(x = CC2a.x, y = CC2a.y)) +
+  	coord_fixed() +
+    xlim(-lim/2, lim/2) +
+    ylim(-lim/2, lim/2) +
+   ## stat_density_2d(geom = "raster", aes(alpha = ..level.., fill = stat(ndensity)), geom = "tile", contour = FALSE, n = 200, bins = 4) +
+    #scale_fill_distiller(palette = "Reds", direction = 1)+
+  stat_density_2d(aes(fill = stat(ndensity)), geom = "raster", contour = FALSE,  h = c(0.5,0.5), n = 500) +
+ scale_fill_gradient(low="#66FFFF", high="#006666",limits=c(0.001, 1),na.value="transparent", breaks = c(0.001, 0.25, 0.5, 0.75, 1), labels = c("0.00", "0.25", "0.50", "0.75", "1.00")) +
+	 labs(
+    x = expression(xi['p,x']),
+    y = expression(xi['p,y']),
+	colour = "Density,"
+  ) +
+    #labs(fill = "Density,"~mm^2) +
+	ggtitle("Cancer cell density")+
+  theme(legend.position="top", legend.box="horizontal", title = element_text(size=30), axis.text.y = element_text(size=25), axis.title.y = element_text(size=30), axis.title.x = element_blank(), plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+legend.title = element_blank(), axis.text.x  = element_blank(), legend.text = element_text(size = 25), legend.key.size = unit(1, 'cm'), legend.key.width = unit(2,"cm") ) +
+guides(size = guide_legend(title.position="top", title.hjust = 0.5)) +
+#geom_density_2d(size = 0.3, colour = "brown") +
+#geom_point(data=CCTst,aes(x=CC2st$x,y=CC2st$y), colour = "#750e13") +
+geom_density_2d(data=CCTst,aes(x=CC2st$x,y=CC2st$y), size = 0.6, colour = "#330066") +
+#geom_density_2d(size = 0.3, colour = "dark red") +
+annotate("text", x = -40, y = 40, label = 'bold("A")', hjust = 0, vjust = 1, parse = TRUE, , size = 10) +
+#geom_point(alpha = 0.05, shape = 20, colour = "red")
+ 
+ggsave(paste0("CCells", k, sep=".", "png"))
+
+CC2b$x <- CC2b$x/Scale/xref-lim/2
+CC2b$y <- CC2b$y/Scale/xref-lim/2
+CD8 <- data.frame(CC2b$x,CC2b$y)
+
+  ggplot(CD8, aes(x = CC2b.x, y = CC2b.y)) +
+  	coord_fixed() +
+    xlim(-lim/2, lim/2) +
+    ylim(-lim/2, lim/2) +
+   ## stat_density_2d(geom = "raster", aes(alpha = ..level.., fill = stat(ndensity)), geom = "tile", contour = FALSE, n = 200, bins = 4) +
+    #scale_fill_distiller(palette = "Reds", direction = 1)+
+  stat_density_2d(aes(fill = stat(ndensity)), geom = "raster", contour = FALSE,  h = c(2,2), n = 500) +
+ scale_fill_gradient(low="palegreen", high="#003300", breaks = c(0.001, 0.25, 0.5, 0.75, 1), labels = c("0.00", "0.25", "0.50", "0.75", "1.00")) +
+	 labs(
+    x = expression(xi['p,x']),
+    y = expression(xi['p,y']),
+	colour = "Density,"
+  ) +
+    #labs(fill = "Density,"~mm^2) +
+	ggtitle("CD8+ T cell density")+
+    theme(legend.position="top", legend.box="horizontal", title = element_text(size=30), axis.text.y = element_blank(), axis.title.y = element_blank(), axis.title.x = element_blank(), plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+legend.title = element_blank(), axis.text.x  = element_blank(), legend.text = element_text(size = 25), legend.key.size = unit(1, 'cm'), legend.key.width = unit(2,"cm") ) +
+guides(size = guide_legend(title.position="top", title.hjust = 0.5)) +
+#geom_point(alpha = 0.1, shape = 16, size=5, colour="#1A237E")
+geom_density_2d(size = 0.6, colour = "dark green", linemitre = 1) +
+ggsave(paste0("CD8Cells", k, sep=".", "png"))
+
+CC2reg2$x <- CC2reg2$x/Scale/xref-lim/2
+CC2reg2$y <- CC2reg2$y/Scale/xref-lim/2
+FOX <- data.frame(CC2reg2$x,CC2reg2$y) 
+
+  ggplot(FOX, aes(x = CC2reg2.x, y = CC2reg2.y)) +
+  	coord_fixed() +
+    xlim(-lim/2, lim/2) +
+    ylim(-lim/2, lim/2) +
+   ## stat_density_2d(geom = "raster", aes(alpha = ..level.., fill = stat(ndensity)), geom = "tile", contour = FALSE, n = 200, bins = 4) +
+    #scale_fill_distiller(palette = "Reds", direction = 1)+
+    stat_density_2d(aes(fill = stat(ndensity)), geom = "raster", contour = FALSE,  h = c(2,2), n = 500) +
+ scale_fill_gradient(high = "#330066", low = "#CC99FF", breaks = c(0.001, 0.25, 0.5, 0.75, 1), labels = c("0.00", "0.25", "0.50", "0.75", "1.00")) +
+	 labs(
+    x = expression(xi['p,x']),
+    y = expression(xi['p,y']),
+	colour = "Density,"
+  ) +
+  	ggtitle("FoxP3+ T cell density")+
+    #labs(fill = "Density,"~mm^2) +
+     theme(legend.position="top", legend.box="horizontal", title = element_text(size=30), axis.text.y = element_blank(), axis.title.y = element_blank(), axis.title.x = element_blank(), plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+legend.title = element_blank(), axis.text.x  = element_blank(), legend.text = element_text(size = 25), legend.key.size = unit(1, 'cm'), legend.key.width = unit(2,"cm") ) +
+guides(size = guide_legend(title.position="top", title.hjust = 0.5)) +
+geom_density_2d(size = 0.6, colour = "#660099", linemitre = 1) +
+#geom_point(alpha = 0.1, shape = 16, size=5, colour="#1A237E")
+ 
+
+ggsave(paste0("FoxCells", k, sep=".", "png"))	
+
+}
+else if (m==2){
+	CD <- data.frame(C_CELLst)
+	CCa <- data2[data2[,"Type"]==1,]
+	CELLDATA <- CCa[CCa[,"State"]==6,]
+    CELL_TYPE = "CCst"
+	ymax <- 1000
+	F = 1
+}
+else if (m==3){
+	CD <- data.frame(C_CELLP)
+	CCa <- data2[data2[,"Type"]==1,]
+	CELLDATA <- CCa[CCa[,"State"]==7,]
+    CELL_TYPE = "CCp"
+	ymax <- 12000
+}
+else if (m==4){
+	CD <- data.frame(C_CELLse)
+	CCa <- data2[data2[,"Type"]==1,]
+	CELLDATA <- CCa[CCa[,"State"]==8,]	
+    CELL_TYPE = "CCse"
+	ymax <- 1000
+}
+else if (m==5){
+	CD <- data.frame(C_CELLb)
+	CELLDATA <- data2[data2[,"Type"]==2,]
+    CELL_TYPE = "CD8"
+	ymax <- 6000
+	F = 1
+
+ymaxTcell <- 6000	
+
+}
+else if (m==6){
+	CD <- data.frame(C_CELLeff)
+	CCb <- data2[data2[,"Type"]==2,]
+	CELLDATA <- CCb[CCb[,"State"]==3,]	
+    CELL_TYPE = "Teff"
+	ymax <- 6000
+}
+else if (m==7){
+	CD <- data.frame(C_CELLcyt)
+	CCb <- data2[data2[,"Type"]==2,]
+	CELLDATA <- CCb[CCb[,"State"]==4,]	
+    CELL_TYPE = "Tcyt"
+	ymax <- 6000
+}
+else if (m==8){
+	CD <- data.frame(C_CELLsup)
+	CCb <- data2[data2[,"Type"]==2,]
+	CELLDATA <- CCb[CCb[,"State"]==5,]		
+    CELL_TYPE = "Tsup"
+	ymax <- 6000
+}
+else if (m==9){
+	CD <- data.frame(C_CELLreg)
+	CELLDATA <- data2[data2[,"Type"]==3,]	
+    CELL_TYPE = "Treg"
+	ymax <- 600
+ymaxTreg <- 600	
+
+}
+else if (m==10){
+	CD <- data.frame(C_CELLmdsc)
+	CELLDATA <- data2[data2[,"Type"]==3,]
+    CELL_TYPE = "MDSC"
+	ymax <- 60
+}
+
+
+### 3d plots ###
+
+for (j in 1:16384){
+
+		#if (CD[j,1]>=center && CD[j,2]>=center){
+		#	CD[j,3]=0
+		#}
+
+DIM = dim(CCa)
+
+	dx2[j] = (CD[j,1])^2
+	dy2[j] = (CD[j,2])^2
+	#dz2[j] = ((CD[j,3]-center*127/128))^2
+	dist_source[j] = (dx2[j] + dy2[j])^(1/2);
+
+
+#if (dist_min < dist_source[j] && dist_max > dist_source[j]){ 
+#    CD[j,4]="IF"
+#}   
+#else if (dist_min >= dist_source[j]){ 
+#    CD[j,4]="CT"
+#}   
+#else if (dist_max <= dist_source[j] || (CD[j,1]>center && CD[j,2]>center)){ 
+#    CD[j,4]="N"
+#}
+
+if (CD[j,3]>10){ 
+    CD[j,4]="IF"
+}	   
+else{ 
+    CD[j,4]="N"
+}	   
+
+}
+
+
+
+#write.csv(CD,paste0(CELL_TYPE, k,".csv"), row.names = FALSE)
+
+### 2d plots (perpendicular to IF) ###
+ 
+CD2 <- matrix(0, nrow = 16384, ncol = 2) 
+ord <- sort.int(dist_source, decreasing = FALSE, index.return = TRUE)  
+CD2[,1] <- ord$x
+CD2[,2] <- CD[ord$ix,3]  
+H = hist(CD2[,1],100);
+Hc = H$counts
+CD2mean <- matrix(0, nrow = length(Hc), ncol = 2)
+CD2sd <- matrix(0, nrow = length(Hc), ncol = 2)
+CIi <- rep(0, length(Hc))
+CIs <- rep(0, length(Hc))
+count <- 0
+CD2mean[,1] <- H$mids
+CD2sd[,1] <- H$mids
+
+for (l in seq(from=1, to=length(Hc), by=1)){
+    if (Hc[l]==0){
+    CD2mean[l,2] = 0 
+    CD2sd[l,2] = 0  
+    }
+    else{
+    CD2mean[l,2] = sum(CD2[(count+1):(count+Hc[l]),2])/Hc[l]  
+        for (i in seq(from=count+1, to=count+Hc[l], by=1)){
+            CD2sd[l,2] = (CD2[i,2]-CD2mean[l,2])^2+CD2sd[l,2]
+        }
+	CD2sd[l,2] = sqrt(CD2sd[l,2]/Hc[l])	
+    count <- count + Hc[l]  
+    }
+}
+
+for (l in seq(from=1, to=length(Hc), by=1)){
+	if (Hc[l]==0){
+		CIs[l] = 0;
+		CIi[l] = 0;
+	}
+	else if(CD2mean[l,2] < 1.96*CD2sd[l,2]/sqrt(Hc[l])){
+		CIs[l] = 1.96*CD2sd[l,2]/sqrt(Hc[l]);
+		CIi[l] = CD2mean[l,2];
+	}
+	else{
+		CIi[l] = 1.96*CD2sd[l,2]/sqrt(Hc[l]);
+		CIs[l] = 1.96*CD2sd[l,2]/sqrt(Hc[l]);
+	}
+}
+
+
+CD2mean[,1] <- CD2mean[,1]
+#dist_min <- dist_min*10
+#dist_max <- dist_max*10
+
+ymin <- 0
+#bitmap(paste0(CELL_TYPE, k, sep=".", "png"), res=300)
+##op <- par(mar = c(5,4.5,4,2) + 0.1)
+plot(CD2mean[,1], CD2mean[,2], las=1, type='l', axes = TRUE, xlim = c(0,16), ylim = c(0,150), xlab = "Radial direction (mm)", ylab = "Density," ~ mm^{-2}, main = paste0(CELL_TYPE, " DENSITY (DAY ", floor(k/4), ")"), lwd = 3, col = 'black')
+polygon(c(CD2mean[,1],rev(CD2mean[,1])),c(CD2mean[,2]-CIi[],rev(CD2mean[,2])),col="grey", border ='grey')
+polygon(c(CD2mean[,1],rev(CD2mean[,1])),c(CD2mean[,2],rev(CD2mean[,2]+CIs[])),col="grey", border ='grey')
+lines(CD2mean[,1], CD2mean[,2], lwd = 3)
+
+days <- c(1:360)
+##text(-1, 2000, "DAY", cex=2)
+##par(op)
+
+grid(nx = NULL, ny = NULL, col = "lightgray", lty = "solid",
+     lwd = par("lwd"), equilogs = TRUE)
+
+##segments(dist_min, ymin, x1 = dist_min, y1 = ymax,
+ ##       col = "red", lty = "dashed", lwd = par("lwd")) 
+##segments(dist_max, ymin, x1 = dist_max, y1 = ymax,
+ ##        col = "red", lty = "dashed", lwd = par("lwd"))          
+##segments((dist_min+(dist_max-dist_min)/4), ymin, x1 = (dist_min+(dist_max-dist_min)/4), y1 = ymax,
+ ##        col = "blue", lty = "dashed", lwd = par("lwd"))
+##segments((dist_min+(dist_max-dist_min)*3/4), ymin, x1 = (dist_min+(dist_max-dist_min)*3/4), y1 = ymax,
+  ##       col = "blue", lty = "dashed", lwd = par("lwd"))  
+
+### 2d plots (top) ###
+
+
+
+##
+
+}
+}
+
+CMass <- data.frame(CM)
+CMass_var <- data.frame(CM_SD)
+
+write.csv(CMass,paste0("CMass.csv"), row.names = FALSE)
+write.csv(CMass_var,paste0("CMass_var.csv"), row.names = FALSE)
+
+tt <- rep(0, (k-1)/interval+1)
+for (i in seq(from=1, to=(k-1)/interval+1, by=1)){
+	tt[i] = i
+}
+
+bitmap("CMx.png", res=300)
+plot(tt,CM[1:length(tt),1],las=1, type='l', axes = TRUE, xlim = c(1,length(tt)),ylim = c(ymin,ymax), lwd = 3, col = 'black')
+polygon(c(tt,rev(tt)),c(CM[1:length(tt),1]-CM_SD[1:length(tt),1],rev(CM[1:length(tt),1])),col="grey", border ='grey')
+polygon(c(tt,rev(tt)),c(CM[1:length(tt),1],rev(CM[1:length(tt),1]+CM_SD[1:length(tt),1])),col="grey", border ='grey')
+lines(tt, CM[1:length(tt),1], lwd = 3)
+bitmap("CMx2.png", res=300)
+
+
+
+
+
+
+
+
