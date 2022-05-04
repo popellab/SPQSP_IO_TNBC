@@ -1,11 +1,11 @@
-CURRENT STATE OF THE SPQSP TNBC CODE
+IMPORTANT NOTES:
 
 1) Input parameters
 
 In the xml file ".../TNBC/TNBC_sim/resource/param_all.xml", there are sets of input parameters with comments "do not change" or "not used". 
 The former refers to predefined parameters for the spQSP algorithm that should not be changed.
-The latter refers to parameters that have been included but are not used for the calculations performed in this study. They are necessary for future expansions of the model (spatial variation of species such as CCL2 or Arg-I, 
-addition of IL2 and IFNgamma, resection of the tumor, ipilimumab and other treatments, etc.). Some code lines for these future expansions have been also included but the algorithm does not use them for this study.
+The latter refers to parameters that have been included but are not used for the calculations performed in this study. They are necessary for future expansions of the model (e.g. spatial variation of species such as CCL2 or Arg-I, 
+addition of IL2 and IFNgamma, resection of the tumor, ipilimumab and other treatments, etc.). Some code lines for these future expansions have been also included, but the algorithm does not use them for this study.
 
 2) The parameter "Param.ABM.Environment.Tumor.sd_init_norm_dist" in the xml file ".../TNBC/TNBC_sim/resource/param_all.xml" should be estimated from 
 
