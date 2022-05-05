@@ -50,12 +50,12 @@
       <IFNg_PDL1_n>1.26</IFNg_PDL1_n>
       <PDL1_halflife>.1</PDL1_halflife>
     </cell>
-//   to here
     <TCell>
-      <lifespanMean>100</lifespanMean>
       <lifespanSD>0</lifespanSD>
       <div_interval>0</div_interval>
-      <div_limit>0</div_limit>
+      <div_limit>0</div_limit>   
+//   to here         
+      <lifespanMean>100</lifespanMean>            
       <moveProb>1</moveProb>
       <moveProb_cyt_or_supp>0.167</moveProb_cyt_or_supp>
 // Not used from here          
@@ -79,8 +79,8 @@
       <progenitorDivMax>9</progenitorDivMax>
       <moveProb>0.055</moveProb>
       <moveProb_csc>0.022</moveProb_csc>
-      <mincc>0</mincc>
-// Not used from here   
+// Not used from here        
+      <mincc>0</mincc> 
       <IFNgUptake>1e-3</IFNgUptake>
 //  to here   
     </CancerCell>
@@ -140,7 +140,7 @@
         </fold>
       </vas>
     </core>
-//    
+//  to here    
 // Not used from here        
     <margin>
       <num_roi>0</num_roi>    
@@ -166,13 +166,13 @@
   </IC>
 <QSP>
   <simulation>
-    <weight_qsp>0</weight_qsp>
     <t_steadystate>5000</t_steadystate>  
 // Not used from here  
+    <weight_qsp>0</weight_qsp>
     <use_resection>0</use_resection>    
     <t_resection>1000</t_resection>
 // to here    
-    <init_cancer_cell>9.4e7</init_cancer_cell>
+    <init_cancer_cell>9.6e7</init_cancer_cell>
     <start>0</start>
     <step>1</step>
     <n_step>360</n_step>
