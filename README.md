@@ -88,6 +88,33 @@ https://www.boost.org/doc/libs/1_70_0/more/getting_started/unix-variants.html
 
 ## Model Simulation 
 The Makefile of this model is available at: `~/TNBC/TNBC_sim/linux/` <br />
+
+To prepare spQSP for a simulation, write:
 `$ make TNBC_sim` <br />
+
+Then, to show all options to configure the simulation:
 `$ ./TNBC_sim -h` <br />
-For all options to configure the simulation
+
+It will show the following options:
+
+Allowed options:
+  -h [ --help ]                         produce help message
+  -s [ --seed ] arg (=0)                seed value
+  -t [ --time ] arg (=0)                total number of steps
+  -p [ --param-file ] arg               parameter file name
+  -o [ --output-path ] arg (=defaultOut)
+                                        output file base path
+  --outParam arg (=outParam.xml)        save a copy of parameter file
+  -B [ --brief ]                        print brief tracking info to stdout
+  -S [ --stats ]                        whether to print stats
+  --stats-interval arg (=1)             interval to save stats
+  -G [ --grid ] arg (=0)                whether to print grid info. 0: nothing;
+                                        1: cell only; 2: grid only; 3: both.
+  --grid-interval arg (=1)              interval to print grid information
+  --save-state-start arg                save state starting slice
+  --save-state-interval arg             save state interval
+  --load-state arg                      load save state file
+
+Example of a line that runs a simulation and creates a set of output files in a folder called Outputs:
+
+./TNBC_sim -t 1600 -p ../resource/param_all.xml -o Outputs -B -S -G 1
