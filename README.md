@@ -117,4 +117,4 @@ Allowed options:
 
 Example of a line that runs a simulation and creates a set of output files in a folder called Outputs:
 
-./TNBC_sim -t 1600 -p ../resource/param_all.xml -o Outputs -B -S -G 1
+`$./TNBC_sim -t 1600 -p ../resource/param_all.xml -o Outputs -B -S -G 1` <br />
