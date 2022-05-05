@@ -98,9 +98,9 @@ Then, to show all options to configure the simulation:
 It will show the following options:
 
 Allowed options:
-  -h [ --help ]                         produce help message
-  -s [ --seed ] arg (=0)                seed value
-  -t [ --time ] arg (=0)                total number of steps
+`$   -h [ --help ]                         produce help message` <br />
+`$   -s [ --seed ] arg (=0)                seed value` <br />
+`$   -t [ --time ] arg (=0)                total number of steps` <br />
   -p [ --param-file ] arg               parameter file name
   -o [ --output-path ] arg (=defaultOut)
                                         output file base path
@@ -117,4 +117,4 @@ Allowed options:
 
 Example of a line that runs a simulation and creates a set of output files in a folder called Outputs:
 
-`$./TNBC_sim -t 1600 -p ../resource/param_all.xml -o Outputs -B -S -G 1` <br />
+`$ ./TNBC_sim -t 1600 -p ../resource/param_all.xml -o Outputs -B -S -G 1` <br />
