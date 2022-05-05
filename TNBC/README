@@ -12,10 +12,13 @@ addition of IL2 and IFNgamma, resection of the tumor, ipilimumab and other treat
 In the code file ".../TNBC/SP_QSP_TNBC/abm/compartment/LymphCentral.cpp" there are two options to initialize ABM: 
 
 (a) either QSP runs until an initial number of cancer cells is reached (by default in this version; used to avoid the presence of T cells and MDSCs when ABM is initialized)
-(b) or until volume condition is met
+(b) or until volume condition is met; if it is not met, it will show the message "tumor volume condition is not met" that means that the steady state has been reached
 
 Case (a) only requires to introduce the input parameter "Param.QSP.simulation.init_cancer_cell" in the xml file ".../TNBC/TNBC_sim/resource/param_all.xml"
-Case (b)
+Case (b) requires to modify ".../TNBC/SP_QSP_TNBC/abm/compartment/LymphCentral.cpp":
+      - Write // at the beginning of line 101
+      - Remove // from lines 104 and 114-118
+      - Optional: The diameter for the volume condition is the input "Param.QSP.init_value.Parameter.initial_tumour_diameter" in the xml file ".../TNBC/TNBC_sim/resource/param_all.xml" and can be redefined if necessary
 
 3) This spQSP extended version required to change the following lines in two of the shared code files from Gong's original spatial QSP model (https://github.com/popellab/SPQSP_IO/tree/main/SPQSP_IO/SP_QSP_shared/ABM_Base):
 
