@@ -90,21 +90,17 @@ void LymphCentral::setup_param(LymphBloodParam& p){
 		ss.getSystem()->setup_instance_varaibles(p);
 		ss.getSystem()->eval_init_assignment();
 
-		// run to steady state or until volume condition is met
+		
 		double tss = params.getVal(PARAM_QSP_STEADYSTATE) * SEC_PER_DAY;
 		double tt = 0;
 		double deltatt = params.getVal(PARAM_SEC_PER_TIME_SLICE);
 		double tumor_volume = QSP_CONST(QSP_VT_MIN) + (QSP_CONST(QSP_VOL_CELL) * (ss_val[20] + ss_val[18]) + QSP_CONST(QSP_VOL_TCELL) * (ss_val[19] + ss_val[21] + ss_val[22])) / AVOGADROS;
 		double tumor_volume_ref = (PI * std::pow(QSP_CONST(QSP_INIT_TUM_DIAM),3)) / 6;
 
-		//Total tumor (tumor growth): params.getVal(PARAM_QSP_INIT_CANCER_CELL) = 1
-
-		//Total tumor: params.getVal(PARAM_QSP_INIT_CANCER_CELL) = 8.75e7
-
-		//Partial tumor
+		// run QSP until initial number of cancer cells is reached
 		while (ss_val[20]<params.getVal(PARAM_QSP_INIT_CANCER_CELL)) 		
-
-		//QSP solutions
+		
+		// run QSP to steady state until volume condition is met
 		//while (tt < tss && tumor_volume < tumor_volume_ref)
 		{
 			ss.solve(tt, deltatt);
