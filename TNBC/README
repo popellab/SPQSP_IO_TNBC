@@ -20,7 +20,20 @@ Case (b) requires to modify ".../TNBC/SP_QSP_TNBC/abm/compartment/LymphCentral.c
       - Remove // from lines 104 and 114-118
       - Optional: The diameter for the volume condition is the input "Param.QSP.init_value.Parameter.initial_tumour_diameter" in the xml file ".../TNBC/TNBC_sim/resource/param_all.xml" and can be redefined if necessary
 
-3) This spQSP extended version required to change the following lines in two of the shared code files from Gong's original spatial QSP model (https://github.com/popellab/SPQSP_IO/tree/main/SPQSP_IO/SP_QSP_shared/ABM_Base):
+3) Distribution of cancer cell when ABM is initialize
+
+In the code file ".../TNBC/SP_QSP_TNBC/abm/compartment/VoxelContentGen.cpp" there are two options to initialize ABM: 
+
+(a) Partial tumor (a quarter of a sliced tumor; by default in this version)
+(b) Full tumor
+
+Case (a) only requires to introduce the input parameters "Param.ABM.Environment.Tumor.mean_init_norm_dist" and "Param.ABM.Environment.Tumor.sd_init_norm_dist" in the xml file ".../TNBC/TNBC_sim/resource/param_all.xml"
+For case (b):
+      - Introduce the input parameters "Param.ABM.Environment.Tumor.mean_init_norm_dist" and "Param.ABM.Environment.Tumor.sd_init_norm_dist" in the xml file ".../TNBC/TNBC_sim/resource/param_all.xml"
+      - Write // at the beginning of lines 56-61
+      - Remove // from lines 41-52     
+
+4) This spQSP extended version required to change the following lines in two of the shared code files from Gong's original spatial QSP model (https://github.com/popellab/SPQSP_IO/tree/main/SPQSP_IO/SP_QSP_shared/ABM_Base):
 
 -   .../TNBC/SP_QSP_shared/ABM_Base/SpatialCompartment.h
 
