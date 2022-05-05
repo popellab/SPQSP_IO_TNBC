@@ -36,53 +36,30 @@ bool VoxelContentGen::get_type_state(const Coord3D& c, RNG& rng,
 	state = AgentStateEnum::CANCER_PROGENITOR;
 	
 
-	//Total tumor (tumor growth)
-	//params.getVal(PARAM_MEAN_INIT_NORM_DIST) = 0, params.getVal(PARAM_SD_INIT_NORM_DIST) = 0.99
-	//double mean_dist = params.getVal(PARAM_MEAN_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	//double sdx_dist = params.getVal(PARAM_SD_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	//double sdy_dist = params.getVal(PARAM_SD_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	//double sdz_dist = params.getVal(PARAM_SD_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-
 	//Total tumor
 
+	//double dxcc = c.x-params.getVal(PARAM_TUMOR_X)/2*params.getVal(PARAM_VOXEL_SIZE)/1e6;
+	//double dycc = c.y-params.getVal(PARAM_TUMOR_Y)/2*params.getVal(PARAM_VOXEL_SIZE)/1e6;	
+	//double dzcc = c.z-params.getVal(PARAM_TUMOR_Z)/2*params.getVal(PARAM_VOXEL_SIZE)/1e6;
+
 	//double mean_dist = params.getVal(PARAM_MEAN_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
 	//double sdx_dist = params.getVal(PARAM_SD_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
 	//double sdy_dist = params.getVal(PARAM_SD_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
 	//double sdz_dist = params.getVal(PARAM_SD_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
 
-
-	//Partial tumor (3D)
-	//double mean_dist = params.getVal(PARAM_MEAN_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	//double sd_dist = params.getVal(PARAM_SD_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	//double dx2cc = std::pow(c.x,2);
-	//double dy2cc = std::pow(c.y,2);
-	//double dz2cc = std::pow(c.z,2);
-	//double dist_sourcecc = std::pow(dx2cc+dy2cc+dz2cc, 0.5)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	//if (dist_sourcecc <= rng.get_normal(mean_dist,sd_dist))	
+	//if ((dxcc <= rng.get_normal(mean_dist,sdx_dist))
+	//&& (dycc <= rng.get_normal(mean_dist,sdy_dist))
+	//&& (dzcc <= rng.get_normal(mean_dist,sdz_dist)))		
 
 	//Partial tumor (thin slice)
+	
 	double mean_dist = params.getVal(PARAM_MEAN_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
 	double sd_dist = params.getVal(PARAM_SD_INIT_NORM_DIST)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
 	double dx2cc = std::pow(c.x,2);
 	double dy2cc = std::pow(c.y,2);
 	double dist_sourcecc = std::pow(dx2cc+dy2cc, 0.5)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
 	if ((dist_sourcecc <= rng.get_normal(mean_dist,sd_dist)) && (c.z >= 0 && c.z < params.getVal(PARAM_TUMOR_Z)))	
-
-
-	//Entire tumor
-	//double dx2cc = std::pow(c.x,2);
-	//double dy2cc = std::pow(c.y,2);	
-	//double dz2cc = std::pow(c.z,2);	
-	//double dx2cc = std::pow(c.x-params.getVal(PARAM_TUMOR_X)/2,2);
-	//double dy2cc = std::pow(c.y-params.getVal(PARAM_TUMOR_Y)/2,2);	
-	//double dz2cc = std::pow(c.z-params.getVal(PARAM_TUMOR_Z)/2,2);		
-	//double dist_sourceccx = std::pow(dx2cc, 0.5)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	//double dist_sourceccy = std::pow(dy2cc, 0.5)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	//double dist_sourceccz = std::pow(dz2cc, 0.5)*params.getVal(PARAM_VOXEL_SIZE)/1e6;
-	//if ((dist_sourceccx <= rng.get_normal(mean_dist,sdx_dist))
-	//&& (dist_sourceccy <= rng.get_normal(mean_dist,sdy_dist))
-	//&& (dist_sourceccz <= rng.get_normal(mean_dist,sdz_dist)))	
-		
+	
 	{
 		int i = rng.sample_cdf(_celltype_cdf);
 		if (i <= dmax+1)
