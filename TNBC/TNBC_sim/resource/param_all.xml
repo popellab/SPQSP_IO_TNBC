@@ -167,17 +167,17 @@
 <QSP>
   <simulation>
     <t_steadystate>5000</t_steadystate>  
+    <init_cancer_cell>9.6e7</init_cancer_cell>	  
 // Not used from here  
     <weight_qsp>0</weight_qsp>
     <use_resection>0</use_resection>    
     <t_resection>1000</t_resection>
-// to here    
-    <init_cancer_cell>9.6e7</init_cancer_cell>
     <start>0</start>
     <step>1</step>
     <n_step>360</n_step>
     <tol_rel>1e-09</tol_rel>
     <tol_abs>1e-18</tol_abs>
+// to here 	  
   </simulation>
   <init_value>
     <Compartment>
