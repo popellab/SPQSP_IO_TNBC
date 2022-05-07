@@ -32,8 +32,6 @@ for (mm in seq(from=1, to=1, by=interval)){
 	data <- ldf[[mm]]
 	
 
-k=mm*4170
-
 CC <- data[data[,"Type"]==1,]
 for (i in 70:79){
 	if (i==70){
@@ -106,7 +104,7 @@ scale_color_viridis_c(direction = -1) +
 annotate("text", x = -3.5, y = 3.5, label = 'bold("A")', hjust = 0, vjust = 1, parse = TRUE, , size = 10)
 
  
-ggsave(paste0("CCells", k, sep=".", "png"))
+ggsave(paste0("CCells", mm, sep=".", "png"))
 
 Teff2$x <- Teff2$x/Scale/xref-lim/2
 Teff2$y <- Teff2$y/Scale/xref-lim/2
@@ -129,7 +127,7 @@ legend.title = element_blank(), axis.text.x  = element_blank(), legend.text = el
 guides(size = guide_legend(title.position="top", title.hjust = 0.5)) +
 geom_density_2d(size = 0.6, colour = "#660099", linemitre = 1)
 
-ggsave(paste0("CD8Cells", k, sep=".", "png"))
+ggsave(paste0("CD8Cells", mm, sep=".", "png"))
 
 Treg2$x <- Treg2$x/Scale/xref-lim/2
 Treg2$y <- Treg2$y/Scale/xref-lim/2
@@ -152,6 +150,9 @@ legend.title = element_blank(), axis.text.x  = element_blank(), legend.text = el
 guides(size = guide_legend(title.position="top", title.hjust = 0.5)) +
 geom_density_2d(size = 0.6, colour = "#000066", linemitre = 1)
 
-ggsave(paste0("FoxCells", k, sep=".", "png"))	
+ggsave(paste0("FoxCells", mm, sep=".", "png"))	
 
 }
+
+
+
