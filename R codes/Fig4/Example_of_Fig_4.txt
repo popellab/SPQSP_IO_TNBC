@@ -12,6 +12,8 @@ theme_set(theme_bw(base_size = 16))
 xlim = 150
 voxel_size = 0.02
 Scale = 1/(voxel_size)
+imin = xlim/2-5
+imax = xlim/2+4
 Prob_mov_prog = 0.0083
 Voxels_move = 3
 Time_step = 21600
@@ -33,9 +35,9 @@ for (mm in seq(from=1, to=1, by=interval)){
 	
 
 CC <- data[data[,"Type"]==1,]
-for (i in 70:79){
-	if (i==70){
-	CC2 <- CC[CC[,"z"]==70,]
+for (i in imin:imax){
+	if (i==imin){
+	CC2 <- CC[CC[,"z"]==imin,]
 	}
 	else{
 	CC2p <- CC[CC[,"z"]==i,]
@@ -44,9 +46,9 @@ for (i in 70:79){
 }
 
 CCst <- CC[CC[,"State"]==6,]
-for (i in 70:79){
-	if (i==70){
-	CCst2 <- CCst[CCst[,"z"]==70,]
+for (i in imin:imax){
+	if (i==imin){
+	CCst2 <- CCst[CCst[,"z"]==imin,]
 	}
 	else{
 	CCstp <- CCst[CCst[,"z"]==i,]
@@ -55,9 +57,9 @@ for (i in 70:79){
 }
 
 Teff <- data[data[,"Type"]==2,]
-for (i in 70:79){
-	if (i==70){
-	Teff2 <- Teff[Teff[,"z"]==70,]
+for (i in imin:imax){
+	if (i==imin){
+	Teff2 <- Teff[Teff[,"z"]==imin,]
 	}
 	else{
 	Teffp <- Teff[Teff[,"z"]==i,]
@@ -66,9 +68,9 @@ for (i in 70:79){
 }
 
 Treg <- data[data[,"Type"]==3,]
-for (i in 70:79){
-	if (i==70){
-	Treg2 <- Treg[Treg[,"z"]==70,]
+for (i in imin:imax){
+	if (i==imin){
+	Treg2 <- Treg[Treg[,"z"]==imin,]
 	}
 	else{
 	Tregp <- Treg[Treg[,"z"]==i,]
@@ -153,6 +155,3 @@ geom_density_2d(size = 0.6, colour = "#000066", linemitre = 1)
 ggsave(paste0("FoxCells", mm, sep=".", "png"))	
 
 }
-
-
-
