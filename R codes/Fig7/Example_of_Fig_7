@@ -1,0 +1,300 @@
+## load Xming 
+## load R in Ubuntu
+
+library("spatstat")
+library(gtools)
+library(ggplot2)
+library(viridis)
+library(png)
+library(grid)
+
+theme_set(theme_bw(base_size = 16))
+
+# High sigma for first estimate cancer cell density values
+sigma = 1
+
+# Refined sigma for cancer cell density values beyond the inner boundary of the IF:
+# As explained in Section 3.3 of the manuscript, this value can be estimated from expression (10)
+# by running this code and observing a maximum distance between cells that are far from 
+# the core of approximately ~ 0.14-0.24 mm.
+# However, expression (10) gives a range of sigma values ~ 0.01-0.02,
+# that generates a discontinuous IF region.
+# Consequently, for this particular case we follow our heuristic proposed approach based on
+# choosing a sigma value that generates a continuous IF region.
+sigmaIF = 0.04
+
+# bandwidth for the stat_density_2d function (we choose the full width at half maximum, FWHM; https://mathworld.wolfram.com/GaussianFunction.html) 
+bandwidth = 2.35*sigmaIF
+
+# 20 voxels in the z-direction, we take 18 for these calculations (see Discussion section, Technical limitations of the QSP-ABM coupling)
+imin = 1
+imax = 18
+
+xlim = 200
+voxel_size = 0.02
+L=xlim*voxel_size
+Scale = 1/(voxel_size)
+max_dens = imax/voxel_size^2
+
+# normalized density at the inner boundary of the IF (Supp Table 2)
+norm_dens_inner_IF = 0.02
+# normalized density at the outer boundary of the IF (Section A3 Supp Mat)
+norm_dens_outer_IF = 1e-9
+
+dens_inner_IF = max_dens*norm_dens_inner_IF
+dens_outer_IF = max_dens*norm_dens_outer_IF
+
+ldf <- list() # creates a list
+listcsv <- dir(pattern = "*.csv") # creates the list of all the csv files in the directory
+listcsv <- mixedsort(sort(listcsv)) 
+
+for (k in seq(from=1, to=1, by=1)){
+ ldf[[k]] <- read.csv(listcsv[k])   
+	data <- ldf[[k]]
+
+CCa <- data[data[,"Type"]==1,]
+for (i in imin:imax){
+	if (i==imin){
+	CC2a <- CCa[CCa[,"z"]==0,]
+	}
+	else{
+	CC2pa <- CCa[CCa[,"z"]==i,]
+	CC2a <- rbind(CC2a,CC2pa)
+	}
+}
+
+
+CCst2 <- data[data[,"Type"]==1,]
+CCst <- CCst2[CCst2[,"State"]==6,]
+for (i in imin:imax){
+	if (i==imin){
+	CC2st <- CCst[CCst[,"z"]==0,]
+	}
+	else{
+	CC2pst <- CCst[CCst[,"z"]==i,]
+	CC2st <- rbind(CC2st,CC2pst)
+	}
+}
+
+CCP2 <- data[data[,"Type"]==1,]
+CCP <- CCP2[CCP2[,"State"]==7,]
+for (i in imin:imax){
+	if (i==imin){
+	CC2P <- CCP[CCP[,"z"]==0,]
+	}
+	else{
+	CC2pP <- CCP[CCP[,"z"]==i,]
+	CC2P <- rbind(CC2P,CC2pP)
+	}
+}
+
+CCse2 <- data[data[,"Type"]==1,]
+CCse <- CCse2[CCse2[,"State"]==8,]
+for (i in imin:imax){
+	if (i==imin){
+	CC2se <- CCse[CCse[,"z"]==0,]
+	}
+	else{
+	CC2pse <- CCse[CCse[,"z"]==i,]
+	CC2se <- rbind(CC2se,CC2pse)
+	}
+}
+
+CD8 <- data[data[,"Type"]==2,]
+for (i in imin:imax){
+	if (i==imin){
+	CD82 <- CD8[CD8[,"z"]==0,]
+	}
+	else{
+	CD8p <- CD8[CD8[,"z"]==i,]
+	CD82 <- rbind(CD82,CD8p)
+	}
+}
+
+Teff2 <- data[data[,"Type"]==2,]
+Teff <- Teff2[Teff2[,"State"]==3,]
+for (i in imin:imax){
+	if (i==imin){
+	Teff2 <- Teff[Teff[,"z"]==0,]
+	}
+	else{
+	Teffp <- Teff[Teff[,"z"]==i,]
+	Teff2 <- rbind(Teff2,Teffp)
+	}
+}
+
+Tsup2 <- data[data[,"Type"]==2,]
+Tsup <- Tsup2[Tsup2[,"State"]==5,]
+for (i in imin:imax){
+	if (i==imin){
+	Tsup2 <- Tsup[Tsup[,"z"]==0,]
+	}
+	else{
+	Tsupp <- Tsup[Tsup[,"z"]==i,]
+	Tsup2 <- rbind(Tsup2,Tsupp)
+	}
+}
+
+Tcyt2 <- data[data[,"Type"]==2,]
+Tcyt <- Tcyt2[Tcyt2[,"State"]==4,]
+for (i in imin:imax){
+	if (i==imin){
+	Tcyt2 <- Tcyt[Tcyt[,"z"]==0,]
+	}
+	else{
+	Tcytp <- Tcyt[Tcyt[,"z"]==i,]
+	Tcyt2 <- rbind(Tcyt2,Tcytp)
+	}
+}
+
+Treg <- data[data[,"Type"]==3,]
+for (i in imin:imax){
+	if (i==imin){
+	Treg2 <-Treg[Treg[,"z"]==0,]
+	}
+	else{
+	Tregp <- Treg[Treg[,"z"]==i,]
+	Treg2 <- rbind(Treg2,Tregp)
+	}
+}
+
+MDSC <- data[data[,"Type"]==4,]
+for (i in imin:imax){
+	if (i==imin){
+	MDSC2 <- MDSC[MDSC[,"z"]==0,]
+	}
+	else{
+	MDSCp <- MDSC[MDSC[,"z"]==i,]
+	MDSC2 <- rbind(MDSC2,MDSCp)
+	}
+}
+
+
+yya<-CC2a$y
+xxa<-CC2a$x
+CC3a <- ppp(xxa,yya,c(0,(xlim-1)),c(0,(xlim-1)))
+
+# Cancer cell density values with high sigma
+
+CC_density <- density(CC3a,sigma)
+CCELLa <- rescale(CC_density,Scale)
+C_CELLa <- CCELLa/(voxel_size^2)
+
+# Cancer cell density values with low sigma (refinement at the beyond the IF inner boundary)
+
+CC_densityIF <- density(CC3a,sigmaIF)
+CCELLaIF <- rescale(CC_densityIF,Scale)
+C_CELLaIF <- CCELLaIF/(voxel_size^2)
+
+for (i in 1:128){
+	for (j in 1:128){
+		if (C_CELLaIF[i,j] < dens_inner_IF){
+			C_CELLa[i,j] = C_CELLaIF[i,j]
+		}	
+	}
+}
+
+for (m in seq(from=1, to=3, by=1)){
+
+if (m==1){
+	CCD <- data.frame(C_CELLa)
+
+CC2st$x <- CC2st$x*0.02
+CC2st$y <- CC2st$y*0.02
+CC2P$x <- CC2P$x*0.02
+CC2P$y <- CC2P$y*0.02
+CC2se$x <- CC2se$x*0.02
+CC2se$y <- CC2se$y*0.02
+CC2a$x <- CC2a$x*0.02
+CC2a$y <- CC2a$y*0.02
+
+path = rbind(data.frame(CCTx=CC2P$x,CCTy=CC2P$y,gr="PCs"),data.frame(CCTx=CC2st$x,CCTy=CC2st$y,gr="CSCs"))
+
+IFx = CCD[(CCD[,3] < dens_inner_IF) & (CCD[,3] > dens_outer_IF),1]
+IFy = CCD[(CCD[,3] < dens_inner_IF) & (CCD[,3] > dens_outer_IF),2]
+IFF = data.frame(IFx,IFy)
+
+ggplot(IFF,aes(x=IFx,y=IFy)) +
+stat_density_2d(aes(fill = stat(ndensity)), geom = "raster", contour = FALSE,  h = c(bandwidth,bandwidth), n = 500, alpha = 1) +
+scale_fill_gradient(high = "paleturquoise3", low = "paleturquoise3",limits=c(dens_outer_IF/dens_inner_IF,1),na.value="transparent")+
+geom_point(data=path,aes(x=CCTx,y=CCTy,shape=gr,color=gr, size=gr),alpha=1) +
+theme(title = element_text(size=26), axis.title.x = element_text(size=24), axis.title.y = element_text(size=24), axis.text.x = element_text(size=24), axis.text.y = element_text(size=24), legend.position="none", plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),legend.title = element_blank()) +
+scale_shape_manual(values=c(16,16)) +
+scale_size_manual(values=c(0.5,0.5)) +
+scale_color_manual(values=c('peachpuff2','tan4')) +
+coord_fixed() + 
+annotate("text", x = 0, y = 4, label = 'bold("A")', hjust = 0, vjust = 1, parse = TRUE, , size = 10) +
+labs(
+    title = "Cancer cells",
+    x = 'x,'~mm,
+    y = 'y,'~mm
+  ) +
+  xlim(0, L) + ylim(0, L) 
+ggsave(paste0("Cancer_Cells", k, sep=".", "png"))
+
+}
+
+else if (m==2){
+	
+CD82$x <- CD82$x*0.02
+CD82$y <- CD82$y*0.02
+Teff2$x <- Teff2$x*0.02
+Teff2$y <- Teff2$y*0.02
+Tcyt2$x <- Tcyt2$x*0.02
+Tcyt2$y <- Tcyt2$y*0.02
+Tsup2$x <- Tsup2$x*0.02
+Tsup2$y <- Tsup2$y*0.02
+Treg2$x <- Treg2$x*0.02
+Treg2$y <- Treg2$y*0.02
+MDSC2$x <- MDSC2$x*0.02
+MDSC2$y <- MDSC2$y*0.02
+
+pathTcell = rbind(data.frame(CCTx=Teff2$x,CCTy=Teff2$y,gr="Teff"),data.frame(CCTx=Tcyt2$x,CCTy=Tcyt2$y,gr="Tcyt"),data.frame(CCTx=Tsup2$x,CCTy=Tsup2$y,gr="Tsupp"),data.frame(CCTx=Treg2$x,CCTy=Treg2$y,gr="Treg"),data.frame(CCTx=MDSC2$x,CCTy=MDSC2$y,gr="MDSCs"))
+
+
+ggplot(IFF,aes(x=IFx,y=IFy)) + 
+stat_density_2d(aes(fill = stat(ndensity)), geom = "raster", contour = FALSE,  h = c(bandwidth,bandwidth), n = 500, alpha = 1) +
+scale_fill_gradient(high = "paleturquoise3", low = "paleturquoise3",limits=c(dens_outer_IF/dens_inner_IF,1),na.value="transparent")+
+geom_point(data=pathTcell,aes(x=CCTx,y=CCTy,shape=gr,color=gr,size=gr),alpha=1) +
+scale_shape_manual(values=c(16,16,16,16,16)) +
+scale_size_manual(values=c(0.2,0.2,0.2,0.2,0.5)) +
+scale_color_manual(values=c('green','red','purple','deepskyblue','palevioletred2')) +
+#scale_fill_manual(values=c('#996633','gold2')) +
+coord_fixed() + 
+
+theme(title = element_text(size=26), axis.title.x = element_text(size=24), axis.title.y = element_blank(), axis.text.x = element_text(size=24), axis.text.y = element_blank(), legend.position="none", plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),legend.title = element_blank()) +
+labs(
+    title = "T cells and MDSCs",
+    x = 'x,'~mm,
+    y = 'y,'~mm
+  ) +
+  xlim(0, L) + ylim(0, L) 
+
+ggsave(paste0("Tcells_MDSC", k, sep=".", "png"))
+
+}
+else if (m==3){
+
+pathall = rbind(data.frame(CCTx=CC2P$x,CCTy=CC2P$y,gr="PCs"),data.frame(CCTx=CC2st$x,CCTy=CC2st$y,gr="CSCs"),data.frame(CCTx=Teff2$x,CCTy=Teff2$y,gr="Teff"),data.frame(CCTx=Tcyt2$x,CCTy=Tcyt2$y,gr="Tcyt"),data.frame(CCTx=Tsup2$x,CCTy=Tsup2$y,gr="Tsupp"),data.frame(CCTx=Treg2$x,CCTy=Treg2$y,gr="Treg"),data.frame(CCTx=MDSC2$x,CCTy=MDSC2$y,gr="MDSCs"))
+
+ggplot(IFF,aes(x=IFx,y=IFy)) + 
+stat_density_2d(aes(fill = stat(ndensity)), geom = "raster", contour = FALSE,  h = c(bandwidth,bandwidth), n = 500, alpha = 1,show_guide = FALSE) +
+scale_fill_gradient(high = "paleturquoise3", low = "paleturquoise3",limits=c(dens_outer_IF/dens_inner_IF,1),na.value="transparent")+
+geom_point(data=pathall,aes(x=CCTx,y=CCTy,shape=gr,color=gr,size=gr),alpha=1) +
+scale_shape_manual(values=c(16,16,16,16,16,16,16)) +
+scale_size_manual(values=c(0.5,0.5,0.2,0.2,0.2,0.2,0.5)) +
+scale_color_manual(values=c('peachpuff2','tan4','green','red','purple','deepskyblue','palevioletred2')) +
+coord_fixed() + 
+theme(legend.position="right", legend.key.size = unit(0.4, 'cm'), legend.text = element_text(size=18), title = element_text(size=23), axis.title.x = element_text(size=21), axis.title.y = element_blank(), axis.text.x = element_text(size=21), axis.text.y = element_blank(), plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),legend.title = element_blank()) +
+guides(size = FALSE,shape = FALSE,colour = guide_legend(override.aes = list(size=14, alpha=1))) +
+labs(
+    title = "All cells",
+    x = 'x,'~mm,
+    y = 'y,'~mm
+  ) +
+  xlim(0, L) + ylim(0, L) 
+ggsave(paste0("All_cells", k, sep=".", "png"))
+
+}
+}
+}
