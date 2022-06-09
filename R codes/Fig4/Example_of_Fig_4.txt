@@ -18,9 +18,9 @@ Prob_mov_prog = 0.0083
 Voxels_move = 3
 Time_step = 21600
 Mig_rate = voxel_size/Time_step*Prob_mov_prog*Voxels_move
-Rateperday = 0.005
+Rateperday = 0.01
 Rate = Rateperday/86400
-xref = Mig_rate/Rate
+xref = 2*Mig_rate/Rate
 lim = xlim/Scale/xref
 
 ldf <- list() # creates a list
